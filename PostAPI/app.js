@@ -1,12 +1,47 @@
 import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
+import { uuid } from 'uuidv4';
 import database from './database.js';
 
+const app = express();
+
+app.use(express.json());
+
+app.use(express.urlencoded({extended:true}));
+
+app.use(morgan('dev'));
+
+app.use(cors());
+
+
 //a user can create posts
+app.post('/posts', async(req,res)=>{
+    const post_id = uuid();
+    const {title,body,user_id, isPublished, is_draft} = req.body;
+    const created_on = new Date();
+    
+    const result = await database.createPost(post_id,title,body,created_on,user_id,is_draft,isPublished);
+
+    res.status(201).json(result);
+});
 
 //a user can see all of his/her posts
+app.get('/posts/:user_id', async(req,res)=>{
+    //console.log(req.params);
+    const {user_id} = req.params;
+
+    const result = await database.getPostByUserId(user_id);
+    //console.log('result',result);
+    res.status(200).json(result);
+});
 
 //a user can edit posts
 
 //a user can delete posts
+
+
+
+
+
+export default app;
