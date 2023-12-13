@@ -49,11 +49,27 @@ app.post('/editPosts', async(req,res)=>{
 //a user can delete posts
 app.post('/deletePost', async(req,res)=>{
     const {post_id, user_id} = req.body;
-    const result = await database.deletePost(post_id,user_id);
+    await database.deletePost(post_id,user_id);
     res.json('Post deleted Successfully');
 })
 
+//a user can like a post
+app.post('/likes', async(req,res)=>{
+    const {post_id, user_id} = req.body;
+    const like_id = uuid();
+    const result = await database.createLikes(like_id,post_id,user_id);
+    console.log(result);
+    res.json('Post liked by user');
+});
 
+//a user can dislike a post
+app.post('/dislikes', async(req,res)=>{
+    const {post_id, user_id} = req.body;
+    const like_id = uuid();
+    const result = await database.createDislikes(like_id,post_id,user_id);
+    console.log(result);
+    res.json('Post disliked by user');
+});
 
 
 export default app;
