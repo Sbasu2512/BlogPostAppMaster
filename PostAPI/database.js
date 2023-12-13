@@ -16,10 +16,23 @@ const createPost = async(post_id,post_title,post_body,created_on,user_id,is_draf
     return result.rows[0];
 };
 
-const getPostByUserId = async(user_id)=>{
+const getAllPostByUserId = async(user_id)=>{
     const query = `SELECT * FROM posts WHERE user_id=$1;`;
     const result = await db.query(query,[user_id]);
     return result.rows;
 }
 
-export default {createPost,getPostByUserId};
+const updatePost = async(post_id,post_title,post_body,is_draft,isPublished,is_edited,edited_on, user_id)=>{
+    const query = `UPDATE posts SET post_title = $1, post_body = $2, is_draft = $3, is_published = $4, is_edited = $5, edited_on = $6
+    WHERE id = $7 and user_id = $8 RETURNING *;`;
+    const result = await db.query(query,[post_title,post_body,is_draft,isPublished,is_edited,edited_on,post_id, user_id]);
+    return result.rows[0];
+}
+
+const deletePost = async(post_id, user_id)=>{
+    const query = `DELETE FROM posts WHERE id=$1 AND user_id=$2;`;
+    const result = await db.query(query,[post_id,user_id]);
+    return result.rows[0];
+}
+
+export default {createPost,getAllPostByUserId, updatePost, deletePost};

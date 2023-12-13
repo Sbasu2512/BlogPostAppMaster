@@ -31,15 +31,27 @@ app.get('/posts/:user_id', async(req,res)=>{
     //console.log(req.params);
     const {user_id} = req.params;
 
-    const result = await database.getPostByUserId(user_id);
+    const result = await database.getAllPostByUserId(user_id);
     //console.log('result',result);
     res.status(200).json(result);
 });
 
 //a user can edit posts
+app.post('/editPosts', async(req,res)=>{
+    const {post_id, title, body, isPublished, is_draft, user_id} = req.body;
+    const is_edited = true;
+    const edited_on = Date.now();
+
+    const result = await database.updatePost(post_id, title, body, is_draft, isPublished, is_edited, edited_on, user_id);
+    res.status(201).json(result);
+})
 
 //a user can delete posts
-
+app.post('/deletePost', async(req,res)=>{
+    const {post_id, user_id} = req.body;
+    const result = await database.deletePost(post_id,user_id);
+    res.json('Post deleted Successfully');
+})
 
 
 
