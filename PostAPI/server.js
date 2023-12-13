@@ -4,5 +4,5 @@ import app from './app.js';
 
 const PORT = process.env.PORT;
 
-app.listen(PORT, ()=> console.log(`UserAPI is running on Port ${PORT}`));
+app.listen(PORT, ()=> console.log(`PostAPI is running on Port ${PORT}`));
 
