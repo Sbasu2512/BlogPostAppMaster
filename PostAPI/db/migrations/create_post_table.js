@@ -1,5 +1,5 @@
 const createPostsTable=`
-DROP TABLE IF EXISTS posts ;
+DROP TABLE IF EXISTS posts CASCADE;
 
 CREATE TABLE posts(
     id uuid PRIMARY KEY,

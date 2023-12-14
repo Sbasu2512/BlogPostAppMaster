@@ -30,4 +30,45 @@ const deleteUser = async(user_id) => {
     return result.rows[0];
 }
 
-export default {createUser, findUserwithEmail, resetPassword, deleteUser, updateEmail};
+const createProfile = async(user_id,profile_id) => {
+    const query = `INSERT INTO profiles (id,user_id) VALUES ($1,$2) RETURNING *;`;
+    const result = await db.query(query, [profile_id,user_id]);
+    return result.rows[0];
+}
+
+const fetchProfileByUserId = async(user_id) => {
+    const query = `SELECT * FROM profiles where user_id = $1;`;
+    const result = await db.query(query, [user_id]);
+    return result.rows[0];
+}
+
+const updateDisplayNameAndDescriptionProfile = async(profile_id, displayName, description, user_id) => {
+    const query = `UPDATE profiles SET displayName = $1, description = $2 WHERE id = $3 and user_id = $4 RETURNING *;`;
+    const result = await db.query(query, [displayName,description, profile_id, user_id]);
+    return result.rows[0];
+}
+
+const updateLastOnline = async(profile_id,user_id,last_online) => {
+    const query = `UPDATE profiles SET last_online = $1 WHERE id = $3 and user_id = $4 RETURNING *;`;
+    const result = await db.query(query, [last_online, profile_id, user_id]);
+    return result.rows[0];
+}
+
+const deleteProfile = async(profile_id, user_id) => {
+    const query = `DELETE FROM profiles WHERE id = $1 AND user_id = $2 RETURNING *;`;
+    const result = await db.query(query,[profile_id,user_id]);
+    return result.rows[0];
+}
+
+export default {
+    createUser, 
+    findUserwithEmail, 
+    resetPassword, 
+    deleteUser, 
+    updateEmail, 
+    createProfile, 
+    updateDisplayNameAndDescriptionProfile,
+    updateLastOnline,
+    deleteProfile,
+    fetchProfileByUserId
+};
