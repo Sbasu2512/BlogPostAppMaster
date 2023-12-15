@@ -33,12 +33,12 @@ app.post('/register', async(req,res)=>{
 
         const user_id = uuid();
        
-        const userCreation = await database.createUser(user_id,email,hash,date);
+        await database.createUser(user_id,email,hash,date);
 
         const profile_id = uuid();
 
         //upon sucessful registration, we need to create profile for the user as well.
-        const profileCreation = await database.createProfile(user_id, profile_id);
+        await database.createProfile(user_id, profile_id);
         //upon succesful registration, we need to send a verification email with link to the user.
 
         res.status(201).json(`Registration succesfull!`);
