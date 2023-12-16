@@ -9,6 +9,8 @@ import {
 } from 'react-router-dom';
 import Posts from './components/Post/Post';
 import ProtectedRoute  from './utility/protectedRoute.js';
+import '../node_modules/font-awesome/css/font-awesome.min.css'; 
+
 
 const router = createBrowserRouter([
   {

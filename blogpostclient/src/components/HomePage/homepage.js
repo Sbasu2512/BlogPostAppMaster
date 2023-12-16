@@ -102,6 +102,7 @@ const HomePage = () => {
             </Tab.Group>
           </div>
       </div>
+      {/* footer */}
     </div>
   </>)
 };
