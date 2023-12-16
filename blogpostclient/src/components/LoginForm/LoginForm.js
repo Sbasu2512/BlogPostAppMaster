@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect } from "react"
 import { useState } from "react";
 import env from "react-dotenv";
+import { useNavigate } from "react-router-dom";
 
 const LoginForm = (props) => {
   const [submitting, setSubmitting] = useState(false);
@@ -9,6 +10,7 @@ const LoginForm = (props) => {
     email: "",
     password: "",
   });
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setInputFields({ ...inputFields, [e.target.name]: e.target.value });
@@ -21,6 +23,7 @@ const LoginForm = (props) => {
         email:inputFields.email,
         password:inputFields.password
       }).then((response)=>{
+        
         setInputFields({
           email: "",
           password: "",
@@ -29,6 +32,9 @@ const LoginForm = (props) => {
         if(response.status === 200){
           localStorage.setItem('userDetails', JSON.stringify(response.data));
           //upon successful login, we need to route the application to posts page with user profile
+          setTimeout(() => {
+            navigate('/posts');
+        }, 500);
         }else{
           props.func({
             status:false,

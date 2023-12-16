@@ -7,18 +7,23 @@ import {
   createBrowserRouter,
   RouterProvider
 } from 'react-router-dom';
+import Posts from './components/Post/Post';
+import ProtectedRoute  from './utility/protectedRoute.js';
 
 const router = createBrowserRouter([
   {
     path:'/',
     element: <App/>
+  },
+  {
+    path:'/posts',
+    element: <ProtectedRoute><Posts/></ProtectedRoute>
   }
 ])
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    {/* <App /> */}
     <RouterProvider router={router} />
   </React.StrictMode>
 );
