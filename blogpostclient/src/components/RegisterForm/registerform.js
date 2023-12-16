@@ -1,6 +1,8 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import axios from 'axios';
+import env from "react-dotenv";
+
 
 const RegisterForm = (props) => {
   const emailRegex = new RegExp(
@@ -10,15 +12,13 @@ const RegisterForm = (props) => {
     /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/
   );
 
-  // const [ email, setEmail ] = useState(null);
-  // const [password, setPassword] = useState(null);
-  const [inputFields, setInputFields] = useState({
+ const [inputFields, setInputFields] = useState({
     email: "",
     password: "",
   });
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
-  const [NoErrors, setNoErrors] = useState(true);
+  const [NoErrors, setNoErrors] = useState(null);
 
   const handleChange = (e) => {
     setInputFields({ ...inputFields, [e.target.name]: e.target.value });
@@ -45,12 +45,17 @@ const RegisterForm = (props) => {
   useEffect(() => {
     if (Object.keys(errors).length === 0 && submitting) {
       setNoErrors(false);
+      setSubmitting(false);
+    }else{
+        setNoErrors(true);
+        setSubmitting(false)
     }
-  }, [errors]);
+  }, [errors,inputFields]);
 
   useEffect(()=>{
-    if(!NoErrors)
-    {axios.post('http://localhost:7000/register',{
+    if(NoErrors === false)
+    {
+        axios.post(`${env.REACT_APP_Users_API}/register`,{
         email: inputFields.email,
         password: inputFields.password
       }).then((response)=>{
@@ -59,9 +64,16 @@ const RegisterForm = (props) => {
             email:'',password:''
           })
         if(response.data === "Registration succesfull!"){
-            props.func({status:true});
+            props.func({status:true,message:response.data});
+        }else{
+            props.func({status:false,message:response.data});
         }
       })
+    }else{
+        setSubmitting(false);
+        setInputFields({
+            email:'',password:''
+          })
     }
   },[NoErrors])
 
@@ -100,9 +112,7 @@ const RegisterForm = (props) => {
         </span>
         <span className="mt-3">
           <button
-            className="bg-green-500 p-1 w-3/5 text-white font-sans font-semibold"
-            
-          >
+            className="bg-green-500 p-1 w-3/5 text-white font-sans font-semibold">
             Register
           </button>
         </span>

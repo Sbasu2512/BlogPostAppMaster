@@ -41,9 +41,9 @@ app.post('/register', async(req,res)=>{
         await database.createProfile(user_id, profile_id);
         //upon succesful registration, we need to send a verification email with link to the user.
 
-        res.status(201).json(`Registration succesfull!`);
+        res.status(200).json(`Registration succesfull!`);
     } else{
-        res.send('Email/password not in correct format');
+        res.status(400).send('Email/password not in correct format');
     }
 });
 
@@ -84,9 +84,9 @@ app.post('/login', async(req,res)=>{
             }
             //implement jwt token & send token with it and save the token to the db
             
-          return res.json(user);
+          return res.status(200).json(user);
         } else{
-            return res.json(`Credentials do not match`);
+            return res.status(400).json(`Credentials do not match`);
         }
 });
 

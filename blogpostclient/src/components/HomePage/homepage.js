@@ -1,4 +1,6 @@
 import React from "react";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { useState, useEffect } from "react";
 import { Tab } from "@headlessui/react";
 import RegisterForm from "../RegisterForm/registerform";
@@ -11,17 +13,39 @@ function classNames(...classes) {
 const HomePage = () => {
 
   const [selectedIndex, setSelectedIndex] = useState(0);
-  let isRegistered = false;
   
   const pulldata = (data) => {
-    isRegistered = data.status;
-    if(isRegistered){
+    let isSuccess = false;
+    isSuccess = data.status;
+    if(isSuccess){
+      toast.success(data.message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        });        
       setSelectedIndex(1);
+    }else{
+      toast.error(data.message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        });
     }
-  }
+  };
 
-  
+
   return (<>
+  <ToastContainer />
     <div className="container flex flex-col space-y-4 justify-center content-center justify-items-center	">
       <div>
         <p className="font-sans text-2xl font-bold text-red-500">BlogApp</p>
@@ -72,7 +96,7 @@ const HomePage = () => {
                     "ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2"
                   )}
                 >
-                  <LoginForm />
+                  <LoginForm func={pulldata} />
                 </Tab.Panel>
               </Tab.Panels>
             </Tab.Group>

@@ -1,15 +1,51 @@
-import React from "react"
+import axios from "axios";
+import React, { useEffect } from "react"
+import { useState } from "react";
+import env from "react-dotenv";
 
-const LoginForm = () => {
-    return (
+const LoginForm = (props) => {
+  const [submitting, setSubmitting] = useState(false);
+  const [inputFields, setInputFields] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    setInputFields({ ...inputFields, [e.target.name]: e.target.value });
+  };
+
+  useEffect(()=>{
+    if(inputFields && submitting){
+      axios.post(`${env.REACT_APP_Users_API}/login`,{
+        email:inputFields.email,
+        password:inputFields.password
+      }).then((response)=>{
+        console.log('res',response);
+        props.func({
+          status:true,
+          message:response.data
+        })
+      })
+    }
+  },[submitting]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(inputFields);
+    setSubmitting(true);
+  }
+  
+  return (
         <>
-        <form className="flex flex-col mt-4 ">
+        <form className="flex flex-col mt-4" onSubmit={handleSubmit}>
           <span>
             <input
               type="email"
               name="email"
               className="border-2 border-gray-300 px-1 w-3/5"
               placeholder="email"
+              value={inputFields.email}
+            onChange={(e) => handleChange(e)}
             />
           </span>
           <span className="mt-3">
@@ -18,6 +54,8 @@ const LoginForm = () => {
               name="password"
               className="border-2 border-gray-300 px-1 w-3/5"
               placeholder="password"
+              value={inputFields.password}
+            onChange={(e) => handleChange(e)}
             />
           </span>
           
