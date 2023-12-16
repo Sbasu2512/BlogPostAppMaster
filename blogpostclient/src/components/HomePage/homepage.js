@@ -12,7 +12,7 @@ function classNames(...classes) {
 
 const HomePage = () => {
 
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState(1);
   
   const pulldata = (data) => {
     let isSuccess = false;

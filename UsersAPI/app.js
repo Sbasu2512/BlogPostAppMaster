@@ -43,7 +43,7 @@ app.post('/register', async(req,res)=>{
 
         res.status(200).json(`Registration succesfull!`);
     } else{
-        res.status(400).send('Email/password not in correct format');
+        res.status(201).send('Email/password not in correct format');
     }
 });
 
@@ -69,25 +69,28 @@ app.post('/login', async(req,res)=>{
     
         const ifUserExists = await database.findUserwithEmail(email);
         // match password hash
-        const passwordMatches = await bcrypt.compare(password, ifUserExists.password);
-        if(passwordMatches){
-            //upon successful login, we need to send the profile details to the front end as well as the user details
-            const profileDetails = await database.fetchProfileByUserId(ifUserExists.id);
-            const user = {
-                email: ifUserExists?.email,
-                userId: ifUserExists?.id,
-                isVerfiedEmail: ifUserExists?.isVerfiedEmail,
-                profileId:profileDetails?.id,
-                displayName:profileDetails?.displayName,
-                profilePicture:profileDetails?.profilePicture,
-                description:profileDetails?.description
+        if(ifUserExists){
+            const passwordMatches = await bcrypt.compare(password, ifUserExists?.password);
+            if(passwordMatches){
+                //upon successful login, we need to send the profile details to the front end as well as the user details
+                const profileDetails = await database.fetchProfileByUserId(ifUserExists.id);
+                const user = {
+                    email: ifUserExists?.email,
+                    userId: ifUserExists?.id,
+                    isVerfiedEmail: ifUserExists?.isVerfiedEmail,
+                    profileId:profileDetails?.id,
+                    displayName:profileDetails?.displayName,
+                    profilePicture:profileDetails?.profilePicture,
+                    description:profileDetails?.description
+                }
+                //implement jwt token & send token with it and save the token to the db
+                
+              return res.status(200).json(user);
+            } else{
+                return res.status(201).json(`Credentials do not match`);
             }
-            //implement jwt token & send token with it and save the token to the db
-            
-          return res.status(200).json(user);
-        } else{
-            return res.status(400).json(`Credentials do not match`);
         }
+        return res.status(201).json(`Email not registered, please register`);
 });
 
 app.post('/logoff', async(req,res)=>{

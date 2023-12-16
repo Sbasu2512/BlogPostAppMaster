@@ -20,11 +20,21 @@ const LoginForm = (props) => {
         email:inputFields.email,
         password:inputFields.password
       }).then((response)=>{
+        setSubmitting(false);
         console.log('res',response);
-        props.func({
-          status:true,
-          message:response.data
-        })
+        if(response.status === 200){
+          
+          props.func({
+            status:true,
+            message:`Login Successful`,
+            data:response.data
+          })
+        }else{
+          props.func({
+            status:false,
+            message:response.data
+          })
+        }
       })
     }
   },[submitting]);

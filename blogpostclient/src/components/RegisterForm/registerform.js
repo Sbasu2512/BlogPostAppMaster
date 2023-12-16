@@ -63,7 +63,7 @@ const RegisterForm = (props) => {
         setInputFields({
             email:'',password:''
           })
-        if(response.data === "Registration succesfull!"){
+        if(response.status === 200){
             props.func({status:true,message:response.data});
         }else{
             props.func({status:false,message:response.data});
