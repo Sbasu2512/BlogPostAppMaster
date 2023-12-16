@@ -16,19 +16,19 @@ const LoginForm = (props) => {
 
   useEffect(()=>{
     if(inputFields && submitting){
+      setSubmitting(false);
       axios.post(`${env.REACT_APP_Users_API}/login`,{
         email:inputFields.email,
         password:inputFields.password
       }).then((response)=>{
-        setSubmitting(false);
+        setInputFields({
+          email: "",
+          password: "",
+        });
         console.log('res',response);
         if(response.status === 200){
-          
-          props.func({
-            status:true,
-            message:`Login Successful`,
-            data:response.data
-          })
+          localStorage.setItem('userDetails', JSON.stringify(response.data));
+          //upon successful login, we need to route the application to posts page with user profile
         }else{
           props.func({
             status:false,
@@ -41,7 +41,6 @@ const LoginForm = (props) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(inputFields);
     setSubmitting(true);
   }
   
@@ -53,7 +52,7 @@ const LoginForm = (props) => {
               type="email"
               name="email"
               className="border-2 border-gray-300 px-1 w-3/5"
-              placeholder="email"
+              placeholder="Email"
               value={inputFields.email}
             onChange={(e) => handleChange(e)}
             />
@@ -63,7 +62,7 @@ const LoginForm = (props) => {
               type="password"
               name="password"
               className="border-2 border-gray-300 px-1 w-3/5"
-              placeholder="password"
+              placeholder="Password"
               value={inputFields.password}
             onChange={(e) => handleChange(e)}
             />

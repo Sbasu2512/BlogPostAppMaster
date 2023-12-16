@@ -79,7 +79,7 @@ app.post('/login', async(req,res)=>{
                     userId: ifUserExists?.id,
                     isVerfiedEmail: ifUserExists?.isVerfiedEmail,
                     profileId:profileDetails?.id,
-                    displayName:profileDetails?.displayName,
+                    displayName:profileDetails?.displayname,
                     profilePicture:profileDetails?.profilePicture,
                     description:profileDetails?.description
                 }

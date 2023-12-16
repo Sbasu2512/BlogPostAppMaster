@@ -98,7 +98,7 @@ const RegisterForm = (props) => {
             type="password"
             name="password"
             className="border-2 border-gray-300 px-1 w-3/5"
-            placeholder="password"
+            placeholder="Password"
             value={inputFields.password}
             onChange={(e) => handleChange(e)}
           />
