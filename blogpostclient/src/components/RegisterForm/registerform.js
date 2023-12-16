@@ -1,7 +1,8 @@
 import React from "react";
 import { useState, useEffect } from "react";
+import axios from 'axios';
 
-const RegisterForm = () => {
+const RegisterForm = (props) => {
   const emailRegex = new RegExp(
     /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
   );
@@ -17,6 +18,7 @@ const RegisterForm = () => {
   });
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
+  const [NoErrors, setNoErrors] = useState(true);
 
   const handleChange = (e) => {
     setInputFields({ ...inputFields, [e.target.name]: e.target.value });
@@ -42,9 +44,26 @@ const RegisterForm = () => {
 
   useEffect(() => {
     if (Object.keys(errors).length === 0 && submitting) {
-      console.log(inputFields);
+      setNoErrors(false);
     }
   }, [errors]);
+
+  useEffect(()=>{
+    if(!NoErrors)
+    {axios.post('http://localhost:7000/register',{
+        email: inputFields.email,
+        password: inputFields.password
+      }).then((response)=>{
+        console.log(response);
+        setInputFields({
+            email:'',password:''
+          })
+        if(response.data === "Registration succesfull!"){
+            props.func({status:true});
+        }
+      })
+    }
+  },[NoErrors])
 
   return (
     <>
