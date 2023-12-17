@@ -9,7 +9,7 @@ export function ProfileDetails(props) {
     <>
     <div className="flex flex-row justify-between mx-2 my-2">
       <p className="font-mono ">Profile Details</p>
-      <span className="mt-1" onClick={() => props.func(true)}>
+      <span className="mt-1" onClick={() => props.func({editMode:true})}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"

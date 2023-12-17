@@ -14,7 +14,7 @@ export function EditProfileDetailsForm(props) {
     <>
       <div className="flex flex-row justify-between mx-2 my-2">
         <p className="font-mono">Edit profile Details</p>
-        <span className="mt-1" onClick={() => props.func(false)}>
+        <span className="mt-1" onClick={() => props.func({editMode:false,fromData:profileDetails})}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"

@@ -1,14 +1,40 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { EditProfileDetailsForm } from "./editProfileForm";
 import { ProfileDetails } from "./profileDetails";
+import axios from "axios";
+import env from "react-dotenv";
 
 export default function PostBody() {
   const [edit, setEdit] = useState(false);
+  const [profileDetails, setProfileDetails] = useState({
+    displayName:"",
+    descripton:""
+  })
  
  const toggleEdit = (data) => {
     console.log(data);
-    setEdit(data);
+    if(data.editMode === false){
+        setProfileDetails({
+            displayName:data.fromData.displayName,
+            descripton:data.fromData.description
+        })
+    }
+    setEdit(data.editMode);
   }
+
+  useEffect(()=>{
+    if(!edit && profileDetails){
+        const userDetailsString = localStorage.getItem('userDetails')
+        const userDetailsObj = JSON.parse(userDetailsString);
+       console.log(userDetailsObj)
+       const userId = userDetailsObj.userId;
+       const profileId = userDetailsObj.profileId;
+       console.log(profileDetails)
+        // axios.post(`${env.REACT_APP_Users_API}/login`,(res)=>{
+
+        // })
+    }
+  },[profileDetails])
 
 //   console.log("edit", edit);
 
