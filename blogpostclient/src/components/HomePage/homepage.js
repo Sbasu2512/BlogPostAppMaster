@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { Tab } from "@headlessui/react";
 import RegisterForm from "../RegisterForm/registerform";
 import LoginForm from "../LoginForm/LoginForm";
+import Footer from "../Footer/Footer";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -47,8 +48,8 @@ const HomePage = () => {
   return (<>
   <ToastContainer />
     <div className="container flex flex-col space-y-4 justify-center content-center justify-items-center	">
-      <div>
-        <p className="font-sans text-2xl font-bold text-red-500">BlogApp</p>
+      <div className="h-16 bg-orange-500 text-white">
+        <p className="font-sans text-2xl font-bold mt-3">BlogApp</p>
       </div>
       <div className="w-9/12 h-2/4 mx-40 ">
           <div className="w-full max-w-md px-2 py-16 sm:px-0 h-1/4 mx-96">
@@ -102,7 +103,9 @@ const HomePage = () => {
             </Tab.Group>
           </div>
       </div>
-      {/* footer */}
+      <div className="absolute bottom-0 w-full">
+      <Footer/>
+      </div>
     </div>
   </>)
 };
