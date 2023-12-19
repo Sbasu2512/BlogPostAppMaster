@@ -3,8 +3,10 @@ import { EditProfileDetailsForm } from "./editProfileForm";
 import { ProfileDetails } from "./profileDetails";
 import axios from "axios";
 import env from "react-dotenv";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
-export default function PostBody() {
+export default function PostBody(props) {
   const [edit, setEdit] = useState(false);
   const [profileDetails, setProfileDetails] = useState({
     displayName:"",
@@ -15,28 +17,38 @@ export default function PostBody() {
     console.log(data);
     if(data.editMode === false){
         setProfileDetails({
-            displayName:data.fromData.displayName,
-            descripton:data.fromData.description
+            displayName:data?.fromData?.displayName,
+            descripton:data?.fromData?.description
         })
     }
     setEdit(data.editMode);
   }
+  const navigate = useNavigate();
+  const userDetails = useSelector((state)=>state?.userDetails);
 
-  useEffect(()=>{
-    if(!edit && profileDetails){
-        const userDetailsString = localStorage.getItem('userDetails')
-        const userDetailsObj = JSON.parse(userDetailsString);
-       console.log(userDetailsObj)
-       const userId = userDetailsObj.userId;
-       const profileId = userDetailsObj.profileId;
-       console.log(profileDetails)
-        // axios.post(`${env.REACT_APP_Users_API}/login`,(res)=>{
+  console.log(userDetails);
+  
+  // useEffect(()=>{
+  //   if(!edit && profileDetails){
+  //       const userDetailsString = localStorage.getItem('userDetails')
+  //       const userDetailsObj = JSON.parse(userDetailsString);
+  //      console.log(userDetailsObj)
+  //      const userId = userDetailsObj.userId;
+  //      const profileId = userDetailsObj.profileId;
+  //      console.log(profileDetails)
+  //       // axios.post(`${env.REACT_APP_Users_API}/login`,(res)=>{
 
-        // })
-    }
-  },[profileDetails])
+  //       // })
+  //   }
+  // },[profileDetails])
 
 //   console.log("edit", edit);
+
+const createNewPost = () => {
+  setTimeout(()=>{
+    navigate('/createNewPost',{state:props.token})
+  },500)
+}
 
   return (
     <>
@@ -48,6 +60,7 @@ export default function PostBody() {
               className="w-full h-full rounded ml-2 mb-3"
               type="text"
               placeholder="Create post"
+              onClick={createNewPost}
             />
           </div>
           <div className="h-15 rounded mt-3 light-orange font-mono">
@@ -144,7 +157,10 @@ export default function PostBody() {
               </p>
             </div>
             <div>
-              <button className="flex justify-center content-center justify-items-center p-2 rounded dark-orange text-white mb-4 ml-16 font-mono">
+              <button 
+              className="flex justify-center content-center justify-items-center p-2 rounded dark-orange text-white mb-4 ml-16 font-mono"
+              onClick={createNewPost}
+              >
                 Create Post
               </button>
             </div>

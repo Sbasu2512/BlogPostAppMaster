@@ -6,29 +6,33 @@ import { Tab } from "@headlessui/react";
 import RegisterForm from "../RegisterForm/registerform";
 import LoginForm from "../LoginForm/LoginForm";
 import Footer from "../Footer/Footer";
+import { useDispatch, useSelector } from "react-redux";
+import {addUserDetailsAction} from '../../Actions/userAction';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-const HomePage = () => {
+const HomePage = (props) => {
 
   const [selectedIndex, setSelectedIndex] = useState(1);
+  
+  const dispatch = useDispatch();
   
   const pulldata = (data) => {
     let isSuccess = false;
     isSuccess = data.status;
-    if(isSuccess){
-      toast.success(data.message, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-        });        
+    if(isSuccess){    
+      //store user details
+      const userDetails = {
+        description: data.message.description,
+        displayName: data.message.displayName,
+        email: data.message.email,
+        profileId: data.message.profileId,
+        userId: data.message.userId
+      }
+      dispatch(addUserDetailsAction(userDetails));
+
       setSelectedIndex(1);
     }else{
       toast.error(data.message, {

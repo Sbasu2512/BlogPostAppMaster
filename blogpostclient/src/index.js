@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
@@ -9,7 +9,9 @@ import {
 } from 'react-router-dom';
 import Posts from './components/Post/Post';
 import ProtectedRoute  from './utility/protectedRoute.js';
-import '../node_modules/font-awesome/css/font-awesome.min.css'; 
+import {Provider} from 'react-redux';
+import store from './Redux/store.js';
+import CreatePost from './components/createPost/createPost.js';
 
 
 const router = createBrowserRouter([
@@ -20,13 +22,19 @@ const router = createBrowserRouter([
   {
     path:'/posts',
     element: <ProtectedRoute><Posts/></ProtectedRoute>
+  },
+  {
+    path:'/createNewPost',
+    element: <ProtectedRoute><CreatePost/></ProtectedRoute>
   }
 ])
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
+  <Provider store={store}>
     <RouterProvider router={router} />
+  </Provider>
   </React.StrictMode>
 );
 

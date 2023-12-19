@@ -28,12 +28,21 @@ const LoginForm = (props) => {
           email: "",
           password: "",
         });
-        console.log('res',response);
         if(response.status === 200){
-          localStorage.setItem('userDetails', JSON.stringify(response.data));
+          props.func({
+            status:true,
+            message:response.data.result
+          })
+          //storing the last login time in local storage
+          //storing the user_id & profile_id in local storage
+          
+          localStorage.setItem('lastLoginTime', new Date(Date.now()).getTime());
+          localStorage.setItem('userId', response.data.result.userId);
+          localStorage.setItem('profileId', response.data.result.profileId);          
+          //store the access token securely
           //upon successful login, we need to route the application to posts page with user profile
           setTimeout(() => {
-            navigate('/posts');
+            navigate('/posts',{state:response.data.result.token});
         }, 500);
         }else{
           props.func({

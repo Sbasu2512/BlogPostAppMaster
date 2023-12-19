@@ -6,9 +6,27 @@ const createUser = async(user_id,email,password,dateTime) => {
     return result.rows[0];
 }
 
+const updateToken = async(user_id,refreshToken) => {
+    const query = `UPDATE users SET token = $1 WHERE id = $2 RETURNING *;`;
+    const result = await db.query(query,[refreshToken,user_id]);
+    return result.rows[0];
+}
+
+const deleteToken = async(user_id) => {
+    const query = `UPDATE users SET token = NULL WHERE id = $1 ;`;
+    const result = await db.query(query,[user_id]);
+    return result.rows[0];
+}
+
 const findUserwithEmail = async(email) => {
     const query = `SELECT * FROM users where email=$1;`;
     const result = await db.query(query, [email]);
+    return result.rows[0];
+}
+
+const findUserwithToken = async(refreshToken) => {
+    const query =  `SELECT * FROM users where token = $1;`;
+    const result = await db.query(query, [refreshToken]);
     return result.rows[0];
 }
 
@@ -49,7 +67,7 @@ const updateDisplayNameAndDescriptionProfile = async(profile_id, displayName, de
 }
 
 const updateLastOnline = async(profile_id,user_id,last_online) => {
-    const query = `UPDATE profiles SET last_online = $1 WHERE id = $3 and user_id = $4 RETURNING *;`;
+    const query = `UPDATE profiles SET last_online = $1 WHERE id = $2 and user_id = $3 RETURNING *;`;
     const result = await db.query(query, [last_online, profile_id, user_id]);
     return result.rows[0];
 }
@@ -70,5 +88,8 @@ export default {
     updateDisplayNameAndDescriptionProfile,
     updateLastOnline,
     deleteProfile,
-    fetchProfileByUserId
+    fetchProfileByUserId,
+    updateToken,
+    deleteToken,
+    findUserwithToken
 };

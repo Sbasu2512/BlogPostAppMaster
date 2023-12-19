@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 
-export default function PostHeader() {
+export default function PostHeader(props) {
 
     const navigate = useNavigate();
 
@@ -10,12 +10,13 @@ export default function PostHeader() {
         localStorage.clear();
         navigate("/");
       };
-
+    
+      
     return (
         <>
           <div className="h-16 w-full bg-orange-500 flex">
            {/* home */}
-            <span className="place-self-center ml-3 mr-11">
+            <span className="place-self-center ml-3 mr-11" >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
