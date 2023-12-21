@@ -55,7 +55,7 @@ const createNewPost = () => {
       <div className="container grid grid-cols-5 gap-4">
         <div className="col-span-1"></div>
         <div className="col-span-2 flex flex-col content-center flex-wrap">
-          <div className="h-15 mt-2 rounded outline outline-4 outline-offset-0 outline-amber-100 ">
+          <div className="h-15 mt-2 rounded outline outline-4 outline-offset-0 outline-amber-100">
             <input
               className="w-full h-full rounded ml-2 mb-3"
               type="text"
