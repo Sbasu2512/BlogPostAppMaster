@@ -153,6 +153,21 @@ app.post('/logoff', verifyJWT, async(req,res)=>{
     res.clearCookie('jwt',{httpOnly:true}).json({message:'Logoff Successful'});
 });
 
+app.post('/resetPassword', async(req,res)=>{
+    const {user_id, oldPassword, newPassword} = req.body;
+    const findUser = await database.findUserWithId(user_id);
+    if(findUser){
+        if(bcrypt.compare(oldPassword, findUser.password)){
+            await database.resetPassword(newPassword, user_id)
+            return res.send({result:'Success', message:'Password successfully updated'})
+        } else {
+           return res.send({result:'Failure', message:'Incorrect old password'});
+        }
+    }else{
+       return res.send({result:'Failure', message:'User not found'});
+    }
+});
+
 app.post('/updateEmail', async(req,res)=>{
     const {email, newEmail} = req.body;
     const user = await database.findUserwithEmail(email);

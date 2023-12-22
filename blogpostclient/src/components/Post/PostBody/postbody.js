@@ -15,12 +15,9 @@ export default function PostBody(props) {
   });
 
   const [updatePasswordForm, setUpdatePasswordForm] = useState({
-    oldPassword: null,
-    newPassword: null,
-    confirmNewPassword: null,
+    oldPassword: "",
+    newPassword: ""
   });
-
-  const [passwordMatch, setPasswordMatch] = useState(false);
 
   const toggleEdit = (data) => {
     console.log(data);
@@ -35,19 +32,25 @@ export default function PostBody(props) {
   const navigate = useNavigate();
   const userDetails = useSelector((state) => state?.userDetails);
 
-  console.log(userDetails);
+  // console.log(userDetails);
 
   const handleUpdatePasswordFormChange = (e) => {
-    console.log(e.target.name, e.target.value);
+    // console.log(e.target.name, e.target.value);
     setUpdatePasswordForm({
       ...updatePasswordForm,
       [e.target.name]: e.target.value,
     });
-    if (
-      updatePasswordForm.newPassword === updatePasswordForm.confirmNewPassword
-    ) {
-      setPasswordMatch(true);
-    }
+
+    console.log('pass', updatePasswordForm.newPassword)
+  };
+
+  const resetUpdatePasswordForm = (e) => {
+    e.preventDefault();
+    setUpdatePasswordForm({
+      oldPassword:"",
+      newPassword:"",
+      confirmNewPassword:""
+    });
   };
 
   // useEffect(()=>{
@@ -74,7 +77,7 @@ export default function PostBody(props) {
 
   const title = `What is Lorem Ipsum?`;
   const creator = `Posted by Lorem`;
-  const time = '1 hour ago';
+  const time = "1 hour ago";
   const body = `Lorem Ipsum is simply dummy text of the printing and typesetting
   industry. Lorem Ipsum has been the industry's standard dummy text
   ever since the 1500s, when an unknown printer took a galley of
@@ -88,10 +91,10 @@ export default function PostBody(props) {
 
   return (
     <>
-      <div className="container grid grid-cols-5 gap-4">
+      <div className="container grid grid-cols-5 gap-4 h-screen">
         <div className="col-span-1"></div>
-        <div className="col-span-2 flex flex-col content-center flex-wrap">
-          <div className="h-15 mt-2 rounded outline outline-4 outline-offset-0 outline-amber-100">
+        <div className="col-span-2 flex flex-col content-center flex-wrap h-screen">
+          <div className="h-15 mt-3 rounded outline outline-4 outline-offset-0 outline-amber-100">
             <input
               className="w-full h-full rounded ml-2 mb-3"
               type="text"
@@ -99,11 +102,14 @@ export default function PostBody(props) {
               onClick={createNewPost}
             />
           </div>
+          <div className="overflow-auto min-h-[80%] max-h-[100%] h-[50%]">
           <Card title={title} creator={creator} time={time} body={body} />
-         
+          <Card title={title} creator={creator} time={time} body={body} />
+          
+          </div>
         </div>
         <div className="col-span-1">
-          <div className="my-3 rounded outline outline-4 outline-offset-0 outline-amber-100">
+          <div className="container my-3 rounded outline outline-4 outline-offset-0 outline-amber-100  min-h-[30%] max-h-[35%]">
             <div className="ml-2 p-4">
               <p className="font-mono">
                 Welcome <strong>Display Name</strong>,
@@ -112,7 +118,7 @@ export default function PostBody(props) {
                 below.
               </p>
             </div>
-            <div className="mb-4">
+            <div className="my-4">
               <button
                 className="flex justify-center content-center justify-items-center p-2 rounded dark-orange text-white ml-16 font-mono"
                 onClick={createNewPost}
@@ -132,7 +138,7 @@ export default function PostBody(props) {
             <div className="flex flex-col justify-between mx-2 my-2">
               <p className="font-mono ">Account Settings</p>
               <form>
-                <div className="mt-2 mb-2">
+                <div className="my-2">
                   <p>Change Password</p>
                   <div>
                     <input
@@ -143,36 +149,26 @@ export default function PostBody(props) {
                       value={updatePasswordForm.oldPassword}
                       onChange={(e) => handleUpdatePasswordFormChange(e)}
                     />
-                    <input
-                      type="password"
-                      value={updatePasswordForm.newPassword}
-                      onChange={(e) => handleUpdatePasswordFormChange(e)}
-                      name="newPassword"
-                      placeholder="Enter your new password"
-                      className="border-2 border-gray-300 px-1 "
-                    />
-                    <input
-                      type="password"
-                      name="confirmNewPassword"
-                      className="border-2 border-gray-300 px-1 "
-                      placeholder="Re enter your new password"
-                      value={updatePasswordForm.confirmNewPassword}
-                      onChange={(e) => handleUpdatePasswordFormChange(e)}
-                    />
+                    <span className="flex">
+                      <input
+                        type="password"
+                        value={updatePasswordForm.newPassword}
+                        onChange={(e) => handleUpdatePasswordFormChange(e)}
+                        name="newPassword"
+                        placeholder="Enter your new password"
+                        className="border-2 border-gray-300 px-1 mt-2"
+                      />
+                    </span>
                   </div>
                   <div className="mt-2">
                     <button
-                      disabled={!passwordMatch}
                       className={
-                        passwordMatch
-                          ? "bg-green-500"
-                          : "bg-slate-500" +
-                            "	p-1 text-white font-sans font-semibold"
+                            "bg-green-500	p-1 text-white font-sans font-semibold"
                       }
                     >
                       Update Password
                     </button>
-                    <button className="bg-red-500	p-1 text-white font-sans font-semibold ml-2">
+                    <button className="bg-red-500	p-1 text-white font-sans font-semibold ml-2" onClick={(e)=>resetUpdatePasswordForm(e)}>
                       Cancel
                     </button>
                   </div>

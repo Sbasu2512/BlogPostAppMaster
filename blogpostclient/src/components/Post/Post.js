@@ -21,8 +21,9 @@ export default function Posts() {
   return (
     <>
       <PostHeader token={token} func={refreshFeed} />
-
+    <div className="container">
       <PostBody  token={token} />
+    </div>
 
       <PostFooter token={token} />
     </>

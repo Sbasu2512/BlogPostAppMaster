@@ -24,6 +24,12 @@ const findUserwithEmail = async(email) => {
     return result.rows[0];
 }
 
+const findUserWithId = async(id) => {
+    const query = `SELECT * FROM users where id=$1`;
+    const result = await db.query(query, [id]);
+    return result.rows[0];
+}
+
 const findUserwithToken = async(refreshToken) => {
     const query =  `SELECT * FROM users where token = $1;`;
     const result = await db.query(query, [refreshToken]);
@@ -91,5 +97,6 @@ export default {
     fetchProfileByUserId,
     updateToken,
     deleteToken,
-    findUserwithToken
+    findUserwithToken,
+    findUserWithId
 };

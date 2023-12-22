@@ -12,6 +12,7 @@ import ProtectedRoute  from './utility/protectedRoute.js';
 import {Provider} from 'react-redux';
 import store from './Redux/store.js';
 import CreatePost from './components/createPost/createPost.js';
+import PostDetailPage from './components/PostDetailPage/PostDetailPage.js';
 
 
 const router = createBrowserRouter([
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
   {
     path:'/createNewPost',
     element: <ProtectedRoute><CreatePost/></ProtectedRoute>
+  },
+  {
+    path:'/posts/:id',
+    element:<PostDetailPage/>
   }
 ])
 

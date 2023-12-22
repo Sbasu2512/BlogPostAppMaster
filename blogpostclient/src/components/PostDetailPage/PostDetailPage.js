@@ -1,24 +1,18 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import PostFooter from "../Post/PostFooter/postfooter";
+import PostHeader from "../Post/PostHeader/PostHeader";
 
-export default function Card(props) {
+export default function PostDetailPage(props) {
 
-    const {title, creator,time,body} = props;
-
-    const navigate = useNavigate();
-
-    const handlePostDetail = (e) => {
-      setTimeout(()=>{
-
-        let path = '/posts/' + 1 ;
-
-        navigate(path, { state: props.token });
-      },500)
-    }
+    const {body,title,creator,time} = props;
 
     return(
         <>
-        <div className="h-15 rounded mt-3 light-orange font-mono">
+        <PostHeader/>
+        <div className="container grid grid-cols-5 gap-4 h-screen">
+        <div className="col-span-1"></div>
+        <div className="col-span-2 flex flex-col content-center flex-wrap h-screen">
+          <div className="overflow-auto min-h-[80%] max-h-[100%] h-[50%]">
+          <div className="h-15 rounded mt-3 light-orange font-mono">
             <span className="ml-2">{title}</span>
             <span className="float-right flex">
               <p className="mr-3">{creator}</p>
@@ -26,7 +20,16 @@ export default function Card(props) {
             </span>
             <br />
             <div className="ml-2 mr-2">
-              {body.length > 150 ?  body.substring(0,150):body }....<p onClick={(e)=>handlePostDetail(e)}>Read More</p>
+            Lorem Ipsum is simply dummy text of the printing and typesetting
+  industry. Lorem Ipsum has been the industry's standard dummy text
+  ever since the 1500s, when an unknown printer took a galley of
+  type and scrambled it to make a type specimen book. It has
+  survived not only five centuries, but also the leap into
+  electronic typesetting, remaining essentially unchanged. It was
+  popularised in the 1960s with the release of Letraset sheets
+  containing Lorem Ipsum passages, and more recently with desktop
+  publishing software like Aldus PageMaker including versions of
+  Lorem Ipsum.
             </div>
             <div className="flex flex-row bg-yellow-200">
               <span className="w-[50%] flex content-center justify-center justify-items-center">
@@ -51,6 +54,17 @@ export default function Card(props) {
               </span>
             </div>
           </div>
+          
+          
+          </div>
+        </div>
+        <div className="col-span-1">
+          
+          
+        </div>
+        <div className="col-span-1"></div>
+      </div>
+        <PostFooter/>
         </>
     )
 }

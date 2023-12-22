@@ -16,14 +16,14 @@ code {
     monospace;
 }
 
-.App-footer {
-    height: 14px;
-  width: 14px;
- 
-  background-image: url("../public/icons/svgs/solid/heart.svg");
-}
 
 @layer utilities{
+  .App-footer {
+      height: 14px;
+    width: 14px;
+   
+    background-image: url("../public/icons/svgs/solid/heart.svg");
+  }
   .vertical-line{
     border-left: 2px solid black;
     height: 700px;
