@@ -74,7 +74,6 @@ export default function Posts() {
     return ()=>{
       setLogUserOut(false)
     }
-
   },[logUserOut])
 
 

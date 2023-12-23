@@ -1,10 +1,11 @@
 import { addUserDetails, changeUserDetails, deleteUserDetails } from "./actionTypes";
 
-const initialState = {};
+const initialState = [];
 
-export default function userReducer  (state = initialState ,action)  {
+export default function userReducer  (state = initialState, action)  {
     switch (action.type) {
         case addUserDetails:
+            console.log('data from user reducer',action.payload);
             return{
                 ...state,
                 userDetails: action.payload
@@ -14,10 +15,11 @@ export default function userReducer  (state = initialState ,action)  {
             return {};
 
         case changeUserDetails:
-            console.log(state);
+            console.log('changeUserDetails',state);
             break;
     
         default:
+            console.log('hit default trying:',action);
             return {};
     }
 }

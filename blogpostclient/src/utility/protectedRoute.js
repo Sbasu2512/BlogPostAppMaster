@@ -5,7 +5,7 @@ import { Route, useNavigate } from "react-router-dom";
 const ProtectedRoute = (props) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const state = useSelector((state) => {
-        return state?.users?.userDetails
+        return state
     })
     console.log("🚀 ~ file: protectedRoute.js:8 ~ ProtectedRoute ~ state:", state)
     const navigate = useNavigate();
