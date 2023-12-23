@@ -1,4 +1,4 @@
-import { addUserDetails, deleteUserDetails, changeUserDetails } from "../Redux/actionTypes";
+import { addUserDetails, deleteUserDetails, changeUserDetails } from "../Redux/User/actionTypes";
 
 
 const addUserDetailsAction = (data) => {

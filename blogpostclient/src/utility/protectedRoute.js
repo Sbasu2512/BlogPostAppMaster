@@ -4,11 +4,12 @@ import { Route, useNavigate } from "react-router-dom";
 
 const ProtectedRoute = (props) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [userDetails, setUserDetails] = useState(null);
-
+    const state = useSelector((state) => {
+        return state?.users?.userDetails
+    })
+    console.log("🚀 ~ file: protectedRoute.js:8 ~ ProtectedRoute ~ state:", state)
     const navigate = useNavigate();
 
-   const state = useSelector((state)=>state?.userDetails);
    
     const checkUserEmailOrUserId = () => {
         // const userEmail = state?.email;
@@ -18,9 +19,9 @@ const ProtectedRoute = (props) => {
         // const timeAllowed = 1000*60*4;
         // const now = new Date(Date.now()).getTime();
         // const timeSinceLastLogin = now - lastLoginTime;
-
-        const userId = state?.userId || localStorage.getItem('userId');
-        if (!userId && userId === 'undefined') {
+        const userId = state?.userId ;
+       
+        if (!userId || userId === 'undefined' || userId === 'null') {
             setIsLoggedIn(false);
             return navigate('/');
         }

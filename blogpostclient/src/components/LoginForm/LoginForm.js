@@ -1,6 +1,6 @@
-import axios from "axios";
 import React, { useEffect } from "react"
 import { useState } from "react";
+import axios from "axios";
 import env from "react-dotenv";
 import { useNavigate } from "react-router-dom";
 
@@ -47,7 +47,7 @@ const LoginForm = (props) => {
         }else{
           props.func({
             status:false,
-            message:response.data
+            message:response.data.message
           })
         }
       })

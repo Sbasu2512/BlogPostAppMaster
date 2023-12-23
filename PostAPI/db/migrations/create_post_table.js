@@ -6,6 +6,8 @@ CREATE TABLE posts(
     post_title VARCHAR(255) NOT NULL,
     post_body VARCHAR(255),
     createdOn Date NOT NULL,
+    likesCount int,
+    dislikesCount int,
     is_draft boolean NOT NULL,
     is_published boolean NOT NULL,
     is_edited boolean,

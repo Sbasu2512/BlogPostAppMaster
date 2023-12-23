@@ -1,24 +1,10 @@
-import { addUserDetails, changeUserDetails, deleteUserDetails } from "./actionTypes";
+import { combineReducers } from "redux";
+import userReducer from "./User/userReducer";
+import postReducer from "./Posts/postReducer";
 
-const initialState = {};
+const allReducers = combineReducers({
+    users:userReducer,
+    posts:postReducer
+})
 
-export default function userReducer  (state = initialState ,action)  {
-    switch (action.type) {
-        case addUserDetails:
-            console.log('data', action.payload);
-            return{
-                ...state,
-                userDetails: action.payload
-            }
-        
-        case deleteUserDetails:
-            return {};
-
-        case changeUserDetails:
-            console.log(state);
-            break;
-    
-        default:
-            break;
-    }
-}
+export default  allReducers;

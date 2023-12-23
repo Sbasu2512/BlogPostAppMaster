@@ -6,16 +6,22 @@ import { Tab } from "@headlessui/react";
 import RegisterForm from "../RegisterForm/registerform";
 import LoginForm from "../LoginForm/LoginForm";
 import Footer from "../Footer/Footer";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {addUserDetailsAction} from '../../Actions/userAction';
+import axios from "axios";
+import env from "react-dotenv";
+import { addAllPostsAction, addUserPostsAction } from "../../Actions/postAction";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-const HomePage = (props) => {
+const HomePage = () => {
 
   const [selectedIndex, setSelectedIndex] = useState(1);
+  const [pullPosts, setPullPosts] = useState(false);
+  const [userId, setUserId] = useState("");
+  
   
   const dispatch = useDispatch();
   
@@ -30,9 +36,10 @@ const HomePage = (props) => {
         email: data.message.email,
         profileId: data.message.profileId,
         userId: data.message.userId
-      }
+      };
       dispatch(addUserDetailsAction(userDetails));
-
+      setUserId(data.message.userId);
+      setPullPosts(true);
       setSelectedIndex(1);
     }else{
       toast.error(data.message, {
@@ -47,6 +54,31 @@ const HomePage = (props) => {
         });
     }
   };
+
+  useEffect(()=>{
+    if(pullPosts && userId){
+
+      axios.all(
+        [axios.get(`${env.REACT_APP_Posts_API}/postsAll`),
+        axios.get(`${env.REACT_APP_Posts_API}/posts/${userId}`)]
+      ).then((axios.spread((allPosts,userPosts)=>{
+        //save all posts to store
+        dispatch(addAllPostsAction(allPosts.data.result));
+        //save user posts to store with user_id
+        const userPostObj = {
+          user_id:userId,
+          user_posts:userPosts.data.result
+        }
+        dispatch(addUserPostsAction(userPostObj));
+      })))
+
+    }
+
+    return () => {
+      setUserId("");
+      setPullPosts(false);
+    }
+  },[pullPosts])
 
 
   return (<>

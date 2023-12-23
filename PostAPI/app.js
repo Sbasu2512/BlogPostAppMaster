@@ -3,6 +3,7 @@ import morgan from 'morgan';
 import cors from 'cors';
 import { uuid } from 'uuidv4';
 import database from './database.js';
+import ResponseDto from './Models/responseDto.js';
 
 const app = express();
 
@@ -14,7 +15,6 @@ app.use(morgan('dev'));
 
 app.use(cors());
 
-
 //a user can create posts
 app.post('/posts', async(req,res)=>{
     const post_id = uuid();
@@ -22,18 +22,30 @@ app.post('/posts', async(req,res)=>{
     const created_on = new Date();
     
     const result = await database.createPost(post_id,title,body,created_on,user_id,is_draft,isPublished);
-
-    res.status(201).json(result);
+    const x = new ResponseDto();
+    x.result = result;
+    x.message = 'Post has been created';
+    res.status(201).json(x);
 });
+
+//get all posts
+app.get('/postsAll', async(req,res)=>{
+    const result = await database.getAllPosts();
+    const x = new ResponseDto();
+    x.result = result;
+    x.message = 'Success';
+    res.status(200).json(x);
+})
 
 //a user can see all of his/her posts
 app.get('/posts/:user_id', async(req,res)=>{
-    //console.log(req.params);
+    console.log(req.params);
     const {user_id} = req.params;
-
     const result = await database.getAllPostByUserId(user_id);
-    //console.log('result',result);
-    res.status(200).json(result);
+    const x = new ResponseDto();
+    x.result = result;
+    x.message = 'Success';
+    res.status(200).json(x);
 });
 
 //a user can edit posts

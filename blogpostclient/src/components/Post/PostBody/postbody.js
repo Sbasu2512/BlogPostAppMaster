@@ -8,10 +8,11 @@ import { useNavigate } from "react-router-dom";
 import Card from "../../Card/card";
 
 export default function PostBody(props) {
+  const userDetailsObj = useSelector((state) => state?.user?.userDetails);
   const [edit, setEdit] = useState(false);
   const [profileDetails, setProfileDetails] = useState({
-    displayName: "",
-    descripton: "",
+    displayName: userDetailsObj?.displayName ? userDetailsObj.displayName : "",
+    descripton: userDetailsObj?.description ? userDetailsObj.description : "",
   });
 
   const [updatePasswordForm, setUpdatePasswordForm] = useState({
@@ -21,16 +22,16 @@ export default function PostBody(props) {
 
   const toggleEdit = (data) => {
     console.log(data);
-    if (data.editMode === false) {
+    if (data.editMode === true) {
       setProfileDetails({
         displayName: data?.fromData?.displayName,
         descripton: data?.fromData?.description,
       });
+      setEdit(data.editMode);
     }
-    setEdit(data.editMode);
   };
   const navigate = useNavigate();
-  const userDetails = useSelector((state) => state?.userDetails);
+  
 
   // console.log(userDetails);
 
@@ -53,19 +54,31 @@ export default function PostBody(props) {
     });
   };
 
-  // useEffect(()=>{
-  //   if(!edit && profileDetails){
-  //       const userDetailsString = localStorage.getItem('userDetails')
-  //       const userDetailsObj = JSON.parse(userDetailsString);
-  //      console.log(userDetailsObj)
-  //      const userId = userDetailsObj.userId;
-  //      const profileId = userDetailsObj.profileId;
-  //      console.log(profileDetails)
-  //       // axios.post(`${env.REACT_APP_Users_API}/login`,(res)=>{
+  useEffect(()=>{
+    if(edit && profileDetails){
+       console.log(userDetailsObj)
+       const userId = userDetailsObj.userId;
+       const profileId = userDetailsObj.profileId;
+       console.log(profileDetails)
+        axios.post(`${env.REACT_APP_Users_API}/updateProfile`,{
+          user_id:userId,
+          profile_id:profileId,
+          displayName:profileDetails.displayName,
+          description:profileDetails.descripton
+        }).then((res)=>{
+          console.log(res);
+          if(res.message === 'Profile Updated Successfully'){
+            // setProfileDetails({
+            //   displayName:res.result.ProfileDetails.
+            // })
+          }
+        })
+    }
 
-  //       // })
-  //   }
-  // },[profileDetails])
+    return ()=>{
+      setEdit(false);
+    }
+  },[profileDetails])
 
   //   console.log("edit", edit);
 
@@ -101,6 +114,9 @@ export default function PostBody(props) {
               placeholder="Create post"
               onClick={createNewPost}
             />
+          </div>
+          <div>
+            
           </div>
           <div className="overflow-auto min-h-[80%] max-h-[100%] h-[50%]">
           <Card title={title} creator={creator} time={time} body={body} />
