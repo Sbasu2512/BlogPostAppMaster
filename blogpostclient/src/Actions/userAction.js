@@ -4,7 +4,7 @@ import { addUserDetails, deleteUserDetails, changeUserDetails } from "../Redux/U
 const addUserDetailsAction = (data) => {
     return{
         type: addUserDetails,
-        payload:data
+        payload: data
     }
 }
 

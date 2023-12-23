@@ -37,6 +37,7 @@ const HomePage = () => {
         profileId: data.message.profileId,
         userId: data.message.userId
       };
+      // dispatch(addUserDetailsAction(userDetails));
       dispatch(addUserDetailsAction(userDetails));
       setUserId(data.message.userId);
       setPullPosts(true);

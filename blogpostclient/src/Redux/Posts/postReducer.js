@@ -2,7 +2,7 @@ import { addAllPosts, deleteAllPosts, deleteSomePosts, addUserPosts, changeUserP
 
 const initialState = {};
 
-export default function postReducer  (state = initialState, action)  {
+export default function postReducer(state = initialState, action)  {
     switch (action.type) {
         case addUserPosts:
             //console.log('data from POst Reducer user post', action.payload);
@@ -26,7 +26,7 @@ export default function postReducer  (state = initialState, action)  {
             }
     
         default:
-            console.log('hit default trying:',action);
-            return {};
+            // console.log('hit default trying:',action);
+            return state;
     }
 }
