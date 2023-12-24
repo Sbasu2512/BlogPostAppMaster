@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function Card(props) {
 
-    const {title, creator,time,body, likes, dislikes} = props;
+    const {title, creator,time,body, likes, dislikes, id} = props;
 
     const navigate = useNavigate();
 

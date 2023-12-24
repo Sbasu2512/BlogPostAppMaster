@@ -85,7 +85,6 @@ export default function CreatePost() {
   return (
     <>
     <ToastContainer/>
-      <PostHeader />
       <div className="grid grid-cols-5 gap-4 background-bluish h-[85vh]">
         <div className="col-span-3 mx-28">
           <div className="p-2">
@@ -225,7 +224,6 @@ export default function CreatePost() {
         </div>
         {/* <div className="col-span-1"></div> */}
       </div>
-      <PostFooter />
     </>
   );
 }
