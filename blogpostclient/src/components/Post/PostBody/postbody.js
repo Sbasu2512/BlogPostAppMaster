@@ -3,13 +3,18 @@ import { EditProfileDetailsForm } from "./editProfileForm";
 import { ProfileDetails } from "./profileDetails";
 import axios from "axios";
 import env from "react-dotenv";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Card from "../../Card/card";
+import { updateUserDetailsAction } from "../../../Actions/userAction";
+import { ToastContainer, toast } from 'react-toastify';
 
 export default function PostBody(props) {
-  const userDetailsObj = useSelector((state) => state?.user?.userDetails);
+  const userDetailsObj = useSelector((state) => state?.users?.userDetails);
+  const dispatch = useDispatch();
   const [edit, setEdit] = useState(false);
+  const [showProfileForm, setShowProfileForm] = useState(true);
+
   const [profileDetails, setProfileDetails] = useState({
     displayName: userDetailsObj?.displayName ? userDetailsObj.displayName : "",
     descripton: userDetailsObj?.description ? userDetailsObj.description : "",
@@ -21,13 +26,14 @@ export default function PostBody(props) {
   });
 
   const toggleEdit = (data) => {
-    console.log(data);
-    if (data.editMode === true) {
+    setShowProfileForm(data.showProfileForm)
+    if (data.editMode === false) {
       setProfileDetails({
         displayName: data?.fromData?.displayName,
         descripton: data?.fromData?.description,
       });
-      setEdit(data.editMode);
+      setEdit(true);
+      setShowProfileForm(true)
     }
   };
   const navigate = useNavigate();
@@ -55,33 +61,62 @@ export default function PostBody(props) {
   };
 
   useEffect(()=>{
-    if(edit && profileDetails){
-       console.log(userDetailsObj)
+    if(profileDetails && profileDetails.descripton !== "" && profileDetails.displayName !== "" && edit){
        const userId = userDetailsObj.userId;
        const profileId = userDetailsObj.profileId;
-       console.log(profileDetails)
+       const headers={
+        'authorization':`Bearer ${props.token}`
+       }
         axios.post(`${env.REACT_APP_Users_API}/updateProfile`,{
           user_id:userId,
           profile_id:profileId,
           displayName:profileDetails.displayName,
           description:profileDetails.descripton
-        }).then((res)=>{
-          console.log(res);
-          if(res.message === 'Profile Updated Successfully'){
-            // setProfileDetails({
-            //   displayName:res.result.ProfileDetails.
-            // })
+        },{headers}).then((res)=>{
+          console.log('res',res);
+          if(res.data.message === 'Profile Updated Successfully'){
+            setProfileDetails({
+              displayName:res.data.result.displayname,
+              descripton: res.data.result.description
+            });
+           
+            dispatch(updateUserDetailsAction({
+              userId: userDetailsObj.userId,
+              displayName: res.data.result.displayname,
+              description: res.data.result.description
+            }))
+            
+            toast.success(res.data.message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        });
+          } else{
+            toast.error(res.data.message, {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+              });
           }
         })
-    }
-
-    return ()=>{
-      setEdit(false);
-    }
-  },[profileDetails])
-
-  //   console.log("edit", edit);
-
+      }
+      
+      return ()=>{
+        setEdit(false);
+      }
+    },[profileDetails])
+    
+    
   const createNewPost = () => {
     setTimeout(() => {
       navigate("/createNewPost", { state: props.token });
@@ -104,6 +139,7 @@ export default function PostBody(props) {
 
   return (
     <>
+    <ToastContainer/>
       <div className="container grid grid-cols-5 gap-4 h-screen">
         <div className="col-span-1"></div>
         <div className="col-span-2 flex flex-col content-center flex-wrap h-screen">
@@ -128,7 +164,7 @@ export default function PostBody(props) {
           <div className="container my-3 rounded outline outline-4 outline-offset-0 outline-amber-100  min-h-[30%] max-h-[35%]">
             <div className="ml-2 p-4">
               <p className="font-mono">
-                Welcome <strong>Display Name</strong>,
+                Welcome <strong> {userDetailsObj.displayName} </strong>,
                 <br />
                 Your personal blog post page. To create a post, click the button
                 below.
@@ -144,11 +180,11 @@ export default function PostBody(props) {
             </div>
           </div>
           <div className="mt-2 rounded outline outline-4 outline-offset-0 outline-amber-100">
-            {edit ? (
+            {showProfileForm ?  (
+              <ProfileDetails func={toggleEdit} userDetails={userDetailsObj} />
+            ):(
               <EditProfileDetailsForm func={toggleEdit} />
-            ) : (
-              <ProfileDetails func={toggleEdit} />
-            )}
+            ) }
           </div>
           <div className="mt-4 rounded outline outline-4 outline-offset-0 outline-amber-100">
             <div className="flex flex-col justify-between mx-2 my-2">

@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 
 
 export default function Posts() {
-  const userDetails = useSelector((state) => state?.user?.userDetails);
+  const userDetails = useSelector((state) => state?.users?.userDetails);
   const allPosts = useSelector((state)=> state?.posts?.allPosts);
   const userPosts = useSelector((state)=> state?.posts?.userPosts);
 
@@ -51,7 +51,6 @@ export default function Posts() {
 
   useEffect(()=>{
     if(logUserOut){
-      console.log('hi', logUserOut, userDetails)
       const headers = {
         'Content-Type': 'application/json',
         'Authorization': `JWT ${token}`
@@ -62,9 +61,7 @@ export default function Posts() {
       },{
        headers
       }).then((res)=>{
-        console.log(res);
         if(res.data.message === "Logoff Successful"){
-          console.log(token);
           localStorage.clear();
           navigate("/");
         }
@@ -81,7 +78,7 @@ export default function Posts() {
     <>
       <PostHeader func={refreshFeed} />
     <div className="container">
-      <PostBody token={token}/>
+      <PostBody token={token} allPosts={allPosts} userPosts={userPosts} />
     </div>
 
       <PostFooter/>

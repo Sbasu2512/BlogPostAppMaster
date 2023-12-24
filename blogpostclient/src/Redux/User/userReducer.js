@@ -1,12 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { addUserDetails, changeUserDetails, deleteUserDetails } from "./actionTypes";
+import { addUserDetails, changeUserEmail, changeUserProfileDetails, deleteUserDetails } from "./actionTypes";
 
 const initialState = {};
 
 export default function userReducer(state = initialState, action)  {
     switch (action.type) {
         case addUserDetails:
-            console.log('data from user reducer',action.payload);
             return{
                 ...state,
                 userDetails: action.payload
@@ -15,12 +14,40 @@ export default function userReducer(state = initialState, action)  {
         case deleteUserDetails:
             return {};
 
-        case changeUserDetails:
-            console.log('changeUserDetails',state);
-            break;
+        case changeUserProfileDetails:
+            const userId = state.userDetails.userId;
+            if(userId === action.payload.userId){
+                return {
+                    ...state, 
+                    userDetails:{
+                        userId:action.payload.userId,
+                        profileId:state.userDetails.profileId,
+                        email:state.userDetails.email,
+                        displayName:action.payload.displayName,
+                        description:action.payload.description
+                    }
+                }
+                
+            }
+           return state;
+
+          case changeUserEmail:
+            const id = state.userDetails.userId;
+            if(id === action.payload.userId){
+                return{
+                    ...state,
+                    userDetails:{
+                        userId:action.payload.userId,
+                        profileId:state.userDetails.profileId,
+                        displayName:state.userDetails.displayName,
+                        description:state.userDetails.description,
+                        email:action.payload.email
+                    }
+                }
+            }
+            return state;
     
         default:
-            console.log('hit default trying:',action);
             return state;
     }
 }

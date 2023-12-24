@@ -1,4 +1,4 @@
-import { addUserDetails, deleteUserDetails, changeUserDetails } from "../Redux/User/actionTypes";
+import { addUserDetails, deleteUserDetails, changeUserProfileDetails, changeUserEmail } from "../Redux/User/actionTypes";
 
 
 const addUserDetailsAction = (data) => {
@@ -8,9 +8,17 @@ const addUserDetailsAction = (data) => {
     }
 }
 
-const updateUserDetailsAction = () => {
+const updateUserDetailsAction = (data) => {
     return{
-        type: changeUserDetails
+        type: changeUserProfileDetails,
+        payload:data
+    }
+}
+
+const updateUserEmail = (data) => {
+    return{
+        type:changeUserEmail,
+        payload:data
     }
 }
 
@@ -20,4 +28,4 @@ const deleteUserDetailsAction = () => {
     }
 }
 
-export { addUserDetailsAction, updateUserDetailsAction, deleteUserDetailsAction}
+export { addUserDetailsAction, updateUserDetailsAction, deleteUserDetailsAction, updateUserEmail}

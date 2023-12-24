@@ -39,7 +39,6 @@ app.get('/postsAll', async(req,res)=>{
 
 //a user can see all of his/her posts
 app.get('/posts/:user_id', async(req,res)=>{
-    console.log(req.params);
     const {user_id} = req.params;
     const result = await database.getAllPostByUserId(user_id);
     const x = new ResponseDto();

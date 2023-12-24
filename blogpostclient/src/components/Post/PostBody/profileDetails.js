@@ -2,14 +2,14 @@ import React, { useState } from "react";
 
 export function ProfileDetails(props) {
   //const [edit, setEdit] = useState(false);
-
+// console.log('props',props)
   //props.func(edit);
 
   return (
     <>
     <div className="flex flex-row justify-between mx-2 my-2">
       <p className="font-mono ">Profile Details</p>
-      <span className="mt-1" onClick={() => props.func({editMode:true})}>
+      <span className="mt-1" onClick={() => props.func({editMode:true, showProfileForm:false})}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -27,8 +27,8 @@ export function ProfileDetails(props) {
       </span>
             </div>
       <div className="font-mono ml-2">
-        <p>Display Name: Lucifer</p>
-        <p>Description: dfmdsklnsdklsnvds sklanfadsklfnasfklasnf lkaslkdnsld</p>
+        <p>Display Name: {props.userDetails.displayName} </p>
+        <p>Description: {props.userDetails.description} </p>
       </div>
     </>
   );

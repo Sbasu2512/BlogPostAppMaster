@@ -145,7 +145,7 @@ app.post('/forgotPassword', async(req,res)=>{
     }
 });
 
-app.post('/logoff', verifyJWT, async(req,res)=>{
+app.post('/logoff', async(req,res)=>{
     const {profile_id, user_id} = req.body;
     const last_online = new Date();
     await database.deleteToken(user_id)
