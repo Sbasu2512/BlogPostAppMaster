@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useSelector } from "react-redux";
-import { Route, useNavigate } from "react-router-dom";
+import { Route, useNavigate, useLocation } from "react-router-dom";
 import PostHeader from "../components/Post/PostHeader/PostHeader";
 import PostFooter from "../components/Post/PostFooter/postfooter";
 import { useDispatch } from "react-redux";
@@ -12,7 +12,7 @@ import {
 } from "../Actions/postAction";
 
 const ProtectedRoute = (props) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [fetchPosts, setFetchPosts] = useState(false);
   const [logUserOut, setLogUserOut] = useState(false);
   const dispatch = useDispatch();
@@ -21,6 +21,11 @@ const ProtectedRoute = (props) => {
   });
 
   const navigate = useNavigate();
+  let token;
+  const location = useLocation();
+  if (location?.state) {
+    token = location?.state;
+  }
 
   const checkUserEmailOrUserId = () => {
     // const userEmail = state?.email;
@@ -33,19 +38,26 @@ const ProtectedRoute = (props) => {
     const userId = userDetails?.userId || localStorage.getItem("userId");
 
     if (!userId || userId === "undefined" || userId === "null") {
-      setIsLoggedIn(false);
+      setIsAuthenticated(false);
       return navigate("/");
     }
-    setIsLoggedIn(true);
+    setIsAuthenticated(true);
   };
 
   useEffect(() => {
     checkUserEmailOrUserId();
-  }, [isLoggedIn]);
+  }, [isAuthenticated]);
 
   const refreshFeed = (data) => {
+    const currentUrl = window.location.href;
+    const page = currentUrl.split("/")[3]
+
     if (data.requirement === "fetchPosts") {
-      setFetchPosts(true);
+        if(page === 'posts'){
+            setFetchPosts(true);
+        }else{
+            navigate('/posts',{ state: token })
+        }
     }
     if (data.requirement === "logout") {
       setLogUserOut(true);
@@ -102,7 +114,7 @@ const ProtectedRoute = (props) => {
   return (
     <React.Fragment>
       <PostHeader func={refreshFeed} />
-      {isLoggedIn ? props.children : null}
+      {isAuthenticated ? props.children : null}
       <PostFooter />
     </React.Fragment>
   );

@@ -23,7 +23,6 @@ export default function PostBody(props) {
     newPassword: ""
   });
   const [showuserposts, setShowUserPosts] = useState(false);
-  console.log(props);
 
   const toggleEdit = (data) => {
     setShowProfileForm(data.showProfileForm)
@@ -167,6 +166,7 @@ export default function PostBody(props) {
               body={post.post_body}
               likes={post.likescount}
               dislikes={post.dislikescount}
+              id={post.id}
               />)
             )) : (
               props.allPosts.map((post)=>
@@ -177,6 +177,7 @@ export default function PostBody(props) {
               body={post.post_body}
               likes={post.likescount}
               dislikes={post.dislikescount}
+              id={post.id}
               />)
               )
             )

@@ -29,8 +29,8 @@ const router = createBrowserRouter([
     element: <ProtectedRoute><CreatePost/></ProtectedRoute>
   },
   {
-    path:'/posts/:id',
-    element:<PostDetailPage/>
+    path:'/post/:id',
+    element:<ProtectedRoute><PostDetailPage/></ProtectedRoute>
   }
 ])
 

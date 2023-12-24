@@ -7,7 +7,6 @@ export default function PostDetailPage(props) {
 
     return(
         <>
-        <PostHeader/>
         <div className="container grid grid-cols-5 gap-4 h-screen">
         <div className="col-span-1"></div>
         <div className="col-span-2 flex flex-col content-center flex-wrap h-screen">
@@ -64,7 +63,6 @@ export default function PostDetailPage(props) {
         </div>
         <div className="col-span-1"></div>
       </div>
-        <PostFooter/>
         </>
     )
 }

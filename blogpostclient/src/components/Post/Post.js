@@ -42,12 +42,7 @@ export default function Posts() {
   if (location?.state) {
     token = location?.state;
   }
-  //fetch user details from store
-  const navigate = useNavigate();
-
-
-
-
+ 
   return (
     <>
     <ToastContainer />

@@ -10,7 +10,7 @@ export default function Card(props) {
     const handlePostDetail = (e) => {
       setTimeout(()=>{
 
-        let path = '/posts/' + 1 ;
+        let path = '/post/' + id ;
 
         navigate(path, { state: props.token });
       },500)
