@@ -18,10 +18,10 @@ app.use(cors());
 //a user can create posts
 app.post('/posts', async(req,res)=>{
     const post_id = uuid();
-    const {title,body,user_id, isPublished, is_draft} = req.body;
+    const {title,body,user_id, isPublished, is_draft, tag} = req.body;
     const created_on = new Date();
     
-    const result = await database.createPost(post_id,title,body,created_on,user_id,is_draft,isPublished);
+    const result = await database.createPost(post_id,title,body,created_on,user_id,is_draft,isPublished,tag);
     const x = new ResponseDto();
     x.result = result;
     x.message = 'Post has been created';

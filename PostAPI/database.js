@@ -1,9 +1,9 @@
 import db from "./db/index.js";
 
-const createPost = async(post_id,post_title,post_body,created_on,user_id,is_draft,isPublished)=>{
-    const query = `INSERT INTO posts (id, post_title, post_body, createdon, is_draft, is_published, user_id) 
-    VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *;`;
-    const result = await db.query(query,[post_id,post_title,post_body,created_on,is_draft,isPublished,user_id]);
+const createPost = async(post_id,post_title,post_body,created_on,user_id,is_draft,isPublished,tag)=>{
+    const query = `INSERT INTO posts (id, post_title, post_body, createdon, tag, is_draft, is_published, user_id) 
+    VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *;`;
+    const result = await db.query(query,[post_id,post_title,post_body,created_on,tag,is_draft,isPublished,user_id]);
     return result.rows[0];
 };
 

@@ -5,14 +5,13 @@ import { useNavigate } from "react-router-dom";
 export default function PostHeader(props) {
 
     const logout = (e) => {
-      console.log('clicked')
-        props.func({requirement:'logout'})
+        props.func({requirement:'logout'});
       };
 
     const refreshFeed = (e) => {
       props.func({
         requirement:'fetchPosts'
-      })
+      });
     }
     
       

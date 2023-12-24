@@ -4,15 +4,41 @@ import PostBody from "./PostBody/postbody";
 import PostFooter from "./PostFooter/postfooter";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import axios from "axios";
 import env from "react-dotenv";
 import { useSelector } from "react-redux";
+import { ToastContainer, toast } from 'react-toastify';
+import { updateUserPostsAction,updateAllPostsAction } from "../../Actions/postAction";
 
 
 export default function Posts() {
   const userDetails = useSelector((state) => state?.users?.userDetails);
-  const allPosts = useSelector((state)=> state?.posts?.allPosts);
+  const allPosts = useSelector((state)=> state?.posts?.AllPosts);
   const userPosts = useSelector((state)=> state?.posts?.userPosts);
+  
+  
+
+  const [initialFetch, setInitialFetch] = useState(true)
+  const dispatch = useDispatch();
+  
+  useEffect(()=>{
+    if(initialFetch){
+      toast.success(`Welcome ${userDetails.displayName}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+    }
+
+    return ()=>{setInitialFetch(false)}
+  },[initialFetch]);
+
 
   let token = "";
 
@@ -37,11 +63,20 @@ export default function Posts() {
 
   useEffect(()=>{
     if(fetchPosts){
-      axios.get(`${env.REACT_APP_Posts_API}/postsAll`).then((res)=>{
-        //save all posts in Post Store in redux
-        console.log(res);
-        console.log(token);
-      })
+     //fetching all posts and also updating the redux state
+      axios.all(
+        [axios.get(`${env.REACT_APP_Posts_API}/postsAll`),
+        axios.get(`${env.REACT_APP_Posts_API}/posts/${userDetails.userId}`)]
+      ).then((axios.spread((allPosts,userPosts)=>{
+        //save all posts to store
+        dispatch(updateAllPostsAction(allPosts.data.result));
+        //save user posts to store with user_id
+        const userPostObj = {
+          user_id:userDetails.userId,
+          user_posts:userPosts.data.result
+        }
+        dispatch(updateUserPostsAction(userPostObj));
+      })))
     }
 
    return ()=>{
@@ -76,6 +111,7 @@ export default function Posts() {
 
   return (
     <>
+    <ToastContainer />
       <PostHeader func={refreshFeed} />
     <div className="container">
       <PostBody token={token} allPosts={allPosts} userPosts={userPosts} />

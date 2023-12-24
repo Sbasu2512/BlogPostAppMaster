@@ -14,16 +14,16 @@ export default function PostBody(props) {
   const dispatch = useDispatch();
   const [edit, setEdit] = useState(false);
   const [showProfileForm, setShowProfileForm] = useState(true);
-
   const [profileDetails, setProfileDetails] = useState({
     displayName: userDetailsObj?.displayName ? userDetailsObj.displayName : "",
     descripton: userDetailsObj?.description ? userDetailsObj.description : "",
   });
-
   const [updatePasswordForm, setUpdatePasswordForm] = useState({
     oldPassword: "",
     newPassword: ""
   });
+  const [showuserposts, setShowUserPosts] = useState(false);
+  console.log(props);
 
   const toggleEdit = (data) => {
     setShowProfileForm(data.showProfileForm)
@@ -38,9 +38,6 @@ export default function PostBody(props) {
   };
   const navigate = useNavigate();
   
-
-  // console.log(userDetails);
-
   const handleUpdatePasswordFormChange = (e) => {
     // console.log(e.target.name, e.target.value);
     setUpdatePasswordForm({
@@ -151,12 +148,39 @@ export default function PostBody(props) {
               onClick={createNewPost}
             />
           </div>
-          <div>
-            
+          <div className="flex flex-row bg-yellow-200 mt-2 w-full">
+          <span className="w-[50%] flex content-center justify-center justify-items-center" onClick={(e)=>setShowUserPosts(false)}>
+                Feed
+              </span>
+              <span className="w-[50%] flex content-center justify-center justify-items-center" onClick={(e)=>setShowUserPosts(true)}>
+                Your Posts
+              </span>
           </div>
-          <div className="overflow-auto min-h-[80%] max-h-[100%] h-[50%]">
-          <Card title={title} creator={creator} time={time} body={body} />
-          <Card title={title} creator={creator} time={time} body={body} />
+          <div className="overflow-auto min-h-[70%] max-h-[100%] h-[50%]">
+          {
+            showuserposts? (
+              props.userPosts.user_posts.map((post)=>
+              (<Card 
+              title={post.post_title} 
+              creator={userDetailsObj.displayName} 
+              time={post.createdon}
+              body={post.post_body}
+              likes={post.likescount}
+              dislikes={post.dislikescount}
+              />)
+            )) : (
+              props.allPosts.map((post)=>
+                 (<Card 
+              title={post.post_title} 
+              creator={userDetailsObj.displayName} 
+              time={post.createdon} 
+              body={post.post_body}
+              likes={post.likescount}
+              dislikes={post.dislikescount}
+              />)
+              )
+            )
+          }
           
           </div>
         </div>

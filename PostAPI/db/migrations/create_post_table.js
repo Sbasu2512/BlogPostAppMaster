@@ -4,10 +4,11 @@ DROP TABLE IF EXISTS posts CASCADE;
 CREATE TABLE posts(
     id uuid PRIMARY KEY,
     post_title VARCHAR(255) NOT NULL,
-    post_body VARCHAR(255),
+    post_body text,
     createdOn Date NOT NULL,
     likesCount int,
     dislikesCount int,
+    tag VARCHAR(255) NOT NULL,
     is_draft boolean NOT NULL,
     is_published boolean NOT NULL,
     is_edited boolean,
