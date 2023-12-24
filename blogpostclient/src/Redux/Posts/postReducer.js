@@ -18,7 +18,9 @@ export default function postReducer(state = initialState, action)  {
         case UpdateUserPosts:
             console.log(state);
             console.log(action.payload);
-            break;
+            return{
+                ...state,
+            }
         
         case addAllPosts:
             console.log('data from POst Reducer all post', action.payload);
@@ -30,6 +32,10 @@ export default function postReducer(state = initialState, action)  {
         case updatePostStore:
             console.log(state);
             console.log(action.payload);
+            return{
+                ...state,
+                AllPosts:action.payload
+            }
         break;
     
         default:

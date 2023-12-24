@@ -64,7 +64,6 @@ const HomePage = () => {
         axios.get(`${env.REACT_APP_Posts_API}/posts/${userId}`)]
       ).then((axios.spread((allPosts,userPosts)=>{
         //save all posts to store
-        console.log(allPosts);
         dispatch(addAllPostsAction(allPosts.data.result));
         //save user posts to store with user_id
         const userPostObj = {
