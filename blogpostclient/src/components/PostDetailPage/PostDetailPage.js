@@ -18,11 +18,11 @@ export default function PostDetailPage(props) {
 
     return(
         <>
-        <div className="container grid grid-cols-5 gap-4 h-screen">
+        <div className="container">
         <div className="col-span-1"></div>
         <div className="col-span-2 flex flex-col content-center flex-wrap h-screen">
-          <div className="overflow-auto min-h-[100%] max-h-[100%] h-[100%]">
-          <div className="h-15 rounded mt-3 light-orange font-mono">
+          <div className="overflow-auto h-screen">
+          <div className="h-15 rounded  light-orange font-mono">
             <span className="ml-2">{post.post_title}</span>
             <span className="float-right flex">
               <p className="mr-3">{post.user_id}</p>
