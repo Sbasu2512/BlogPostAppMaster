@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
 import PostHeader from "../Post/PostHeader/PostHeader";
 import PostFooter from "../Post/PostFooter/postfooter";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Switch } from "@headlessui/react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import env from "react-dotenv";
 import { ToastContainer, toast } from "react-toastify";
+import { updateUserPostsAction } from "../../Actions/postAction";
 
 export default function CreatePost() {
   const userDetails = useSelector((state) => state?.users?.userDetails);
   const navigate = useNavigate();
+  const dispatch = useDispatch()
   const [saveDraft, setSaveDraft] = useState(false);
   const [inputFields, setInputFields] = useState({
     title: "",
@@ -56,6 +58,12 @@ export default function CreatePost() {
         .then((res) => {
           console.log(res);
           if(res.status === 201){
+            dispatch(updateUserPostsAction([res.data.result]));
+            //map the res.data.result obj and add displayName of the current user
+            //update the state
+            const allPostsUpdateData = {
+
+            }
             navigate("/posts", { state: "token" });
           } else {
             toast.error(`${res.data.message}`, {

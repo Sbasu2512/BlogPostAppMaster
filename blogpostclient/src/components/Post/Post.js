@@ -15,6 +15,8 @@ export default function Posts() {
   const userPosts = useSelector((state)=> state?.posts?.userPosts);
   const [initialFetch, setInitialFetch] = useState(true)
  
+  console.log('userPosts',userPosts);
+  console.log('allPosts',allPosts);
   
   useEffect(()=>{
     if(initialFetch){

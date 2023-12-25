@@ -28,7 +28,7 @@ export default function Card(props) {
             </span>
             <br />
             <div className="ml-2 mr-2">
-              {body.length > 150 ?  body.substring(0,150):body }....<p onClick={(e)=>handlePostDetail(e)}>Read More</p>
+              {body?.length > 150 ?  body.substring(0,150):body }....<p onClick={(e)=>handlePostDetail(e)}>Read More</p>
             </div>
             <div className="flex flex-row bg-yellow-200">
               <span className="w-[50%] flex content-center justify-center justify-items-center">

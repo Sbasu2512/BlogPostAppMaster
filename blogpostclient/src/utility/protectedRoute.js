@@ -7,8 +7,8 @@ import { useDispatch } from "react-redux";
 import axios from "axios";
 import env from "react-dotenv";
 import {
-  updateUserPostsAction,
-  updateAllPostsAction,
+  addUserPostsAction,
+  addAllPostsAction,
 } from "../Actions/postAction";
 
 const ProtectedRoute = (props) => {
@@ -75,13 +75,13 @@ const ProtectedRoute = (props) => {
         .then(
           axios.spread((allPosts, userPosts) => {
             //save all posts to store
-            dispatch(updateAllPostsAction(allPosts.data.result));
+            dispatch(addAllPostsAction(allPosts.data.result));
             //save user posts to store with user_id
             const userPostObj = {
               user_id: userDetails.userId,
               user_posts: userPosts.data.result,
             };
-            dispatch(updateUserPostsAction(userPostObj));
+            dispatch(addUserPostsAction(userPostObj));
           })
         );
     }

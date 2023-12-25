@@ -119,20 +119,6 @@ export default function PostBody(props) {
     }, 500);
   };
 
-  const title = `What is Lorem Ipsum?`;
-  const creator = `Posted by Lorem`;
-  const time = "1 hour ago";
-  const body = `Lorem Ipsum is simply dummy text of the printing and typesetting
-  industry. Lorem Ipsum has been the industry's standard dummy text
-  ever since the 1500s, when an unknown printer took a galley of
-  type and scrambled it to make a type specimen book. It has
-  survived not only five centuries, but also the leap into
-  electronic typesetting, remaining essentially unchanged. It was
-  popularised in the 1960s with the release of Letraset sheets
-  containing Lorem Ipsum passages, and more recently with desktop
-  publishing software like Aldus PageMaker including versions of
-  Lorem Ipsum.`;
-
   return (
     <>
     <ToastContainer/>
@@ -158,7 +144,7 @@ export default function PostBody(props) {
           <div className="overflow-auto min-h-[70%] max-h-[100%] h-[50%]">
           {
             showuserposts? (
-              props.userPosts.user_posts.map((post)=>
+              props.userPosts.user_posts?.map((post)=>
               (<Card 
               title={post.post_title} 
               creator={userDetailsObj.displayName} 
@@ -167,17 +153,19 @@ export default function PostBody(props) {
               likes={post.likescount}
               dislikes={post.dislikescount}
               id={post.id}
+              key={post.id}
               />)
             )) : (
-              props.allPosts.map((post)=>
+              props?.allPosts?.map((post)=>
                  (<Card 
               title={post.post_title} 
-              creator={userDetailsObj.displayName} 
+              creator={post.displayname} 
               time={post.createdon} 
               body={post.post_body}
               likes={post.likescount}
               dislikes={post.dislikescount}
               id={post.id}
+              key={post.id}
               />)
               )
             )
