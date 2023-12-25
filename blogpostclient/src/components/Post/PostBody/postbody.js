@@ -154,6 +154,7 @@ export default function PostBody(props) {
               dislikes={post.dislikescount}
               id={post.id}
               key={post.id}
+              tag={post.tag}
               />)
             )) : (
               props?.allPosts?.map((post)=>
@@ -166,6 +167,7 @@ export default function PostBody(props) {
               dislikes={post.dislikescount}
               id={post.id}
               key={post.id}
+              tag={post.tag}
               />)
               )
             )

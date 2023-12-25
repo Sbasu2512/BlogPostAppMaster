@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function Card(props) {
 
-    const {title, creator,time,body, likes, dislikes, id} = props;
+    const {title, creator,time,body, likes, dislikes, id, tag} = props;
 
     const navigate = useNavigate();
 
@@ -20,14 +20,18 @@ export default function Card(props) {
 
     return(
         <>
-        <div className="h-15 rounded mt-3 light-orange font-mono">
-            <span className="ml-2">{title}</span>
-            <span className="float-right flex">
-              <p className="mr-3">{creator}</p>
-              <p className="mr-2"> { timePostCreated } </p>
+        <div className="flex flex-col rounded mt-3 light-orange font-mono h-25">
+            <div className="mt-2 text-xs">
+            <span className="ml-2 flex">
+              <p className="mr-3">Posted by {creator}</p>
+              <p className="mr-2"> on { timePostCreated } </p>
             </span>
-            <br />
-            <div className="ml-2 mr-2">
+            </div>
+            <div className="mt-2">
+            <span className="ml-2 text-lg">{title}</span>
+            <span className="ml-3 my-3 ring ring-black rounded-full bg-black text-white">{tag}</span> 
+            </div>
+            <div className="mx-2 mt-2 text-sm">
               {body?.length > 150 ?  body.substring(0,150):body }....<p onClick={(e)=>handlePostDetail(e)}>Read More</p>
             </div>
             <div className="flex flex-row bg-yellow-200">
