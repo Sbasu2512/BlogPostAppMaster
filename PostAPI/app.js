@@ -20,8 +20,9 @@ app.post('/posts', async(req,res)=>{
     const post_id = uuid();
     const {title,body,user_id, isPublished, is_draft, tag} = req.body;
     const created_on = new Date();
-    
-    const result = await database.createPost(post_id,title,body,created_on,user_id,is_draft,isPublished,tag);
+    const dislikesCount = 0;
+    const likesCount = 0;
+    const result = await database.createPost(post_id,title,body,created_on,user_id,is_draft,isPublished,tag, likesCount,dislikesCount);
     const x = new ResponseDto();
     x.result = result;
     x.message = 'Post has been created';
