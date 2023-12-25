@@ -20,18 +20,18 @@ export default function postReducer(state = initialState, action)  {
             console.log(action.payload);
             return{
                 ...state,
+                userPosts:{
+                    user_posts:action.payload
+                }
             }
         
         case addAllPosts:
-            console.log('data from POst Reducer all post', action.payload);
             return{
                 ...state,
                 AllPosts: action.payload
             }
 
         case updatePostStore:
-            console.log(state);
-            console.log(action.payload);
             return{
                 ...state,
                 AllPosts:action.payload

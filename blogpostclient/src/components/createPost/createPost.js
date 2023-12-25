@@ -51,6 +51,7 @@ export default function CreatePost() {
           isPublished: saveDraft,
           is_draft: saveDraft,
           tag: inputFields.tag,
+          displayName: userDetails.displayName
         })
         .then((res) => {
           console.log(res);

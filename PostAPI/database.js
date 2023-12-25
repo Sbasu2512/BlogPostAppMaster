@@ -9,7 +9,7 @@ const createPost = async(post_id,post_title,post_body,created_on,user_id,is_draf
 
 //get all posts by a certain user with likes and dislikes
 const getAllPostByUserId = async(user_id)=>{
-    const query = `SELECT * FROM posts 
+    const query = `SELECT * FROM posts, displayName.users 
                    LEFT OUTER JOIN likes ON posts.id = likes.post_id
                    LEFT OUTER JOIN dislikes ON posts.id = dislikes.post_id
                    WHERE posts.user_id=$1;`;
@@ -19,7 +19,8 @@ const getAllPostByUserId = async(user_id)=>{
 
 //get all posts along with likes and dislikes
 const getAllPosts = async() => {
-    const query = `SELECT * FROM posts
+    const query = `SELECT posts.* , profiles.displayName FROM posts
+    LEFT OUTER JOIN profiles ON posts.user_id = profiles.user_id
     LEFT OUTER JOIN likes ON posts.id = likes.post_id
     LEFT OUTER JOIN dislikes ON posts.id = dislikes.post_id;`;
     const result = await db.query(query);
