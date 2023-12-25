@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import env from "react-dotenv";
 import { ToastContainer, toast } from "react-toastify";
-import { updateUserPostsAction } from "../../Actions/postAction";
+import { updateAllPostsAction, updateUserPostsAction } from "../../Actions/postAction";
 
 export default function CreatePost() {
   const userDetails = useSelector((state) => state?.users?.userDetails);
@@ -58,12 +58,26 @@ export default function CreatePost() {
         .then((res) => {
           console.log(res);
           if(res.status === 201){
-            dispatch(updateUserPostsAction([res.data.result]));
+            dispatch(updateUserPostsAction(res.data.result));
             //map the res.data.result obj and add displayName of the current user
-            //update the state
+            //update the state of allPosts & user_posts
+            //all posts will have  displayName an extra
             const allPostsUpdateData = {
-
+              id:res.data.result.id,
+              post_title:res.data.result.post_title,
+              post_body:res.data.result.post_body,
+              createdon: res.data.result.createdon,
+              likescount: res.data.result.likescount,
+              dislikescount: res.data.result.dislikescount,
+              tag: res.data.result.tag,
+              is_draft: res.data.result.is_draft,
+              is_published: res.data.result.is_published,
+              is_edited: res.data.result.is_edited,
+              edited_on: res.data.result.edited_on,
+              user_id: res.data.result.user_id,
+              displayname: userDetails.displayName
             }
+            dispatch(updateAllPostsAction(allPostsUpdateData));
             navigate("/posts", { state: "token" });
           } else {
             toast.error(`${res.data.message}`, {

@@ -1,4 +1,3 @@
-import { createSlice } from "@reduxjs/toolkit";
 import { addUserDetails, changeUserEmail, changeUserProfileDetails, deleteUserDetails } from "./actionTypes";
 
 const initialState = {};
@@ -51,16 +50,3 @@ export default function userReducer(state = initialState, action)  {
             return state;
     }
 }
-
-// const userSlice = createSlice({
-//     name:'users',
-//     initialState: {},
-//     reducers:{
-//         addUserDetails(state, action) {
-//             state.users.push({
-//                 payload:action.payload,
-//                 type:addUserDetails
-//             })
-//         }
-//     }
-// })
