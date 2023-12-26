@@ -4,6 +4,7 @@ import cors from 'cors';
 import { uuid } from 'uuidv4';
 import database from './database.js';
 import ResponseDto from './Models/responseDto.js';
+import { postEnumeratorLikes} from './helper/helper.js';
 
 const app = express();
 
@@ -20,9 +21,7 @@ app.post('/posts', async(req,res)=>{
     const post_id = uuid();
     const {title,body,user_id, isPublished, is_draft, tag} = req.body;
     const created_on = new Date();
-    const dislikesCount = 0;
-    const likesCount = 0;
-    const result = await database.createPost(post_id,title,body,created_on,user_id,is_draft,isPublished,tag, likesCount,dislikesCount);
+    const result = await database.createPost(post_id,title,body,created_on,user_id,is_draft,isPublished,tag);
     const x = new ResponseDto();
     x.result = result;
     x.message = 'Post has been created';
@@ -31,9 +30,10 @@ app.post('/posts', async(req,res)=>{
 
 //get all posts
 app.get('/postsAll', async(req,res)=>{
-    const result = await database.getAllPosts();
+    const posts = await database.getAllPosts();
+    const postWithLikesAndDislikes = postEnumeratorLikes(posts);
     const x = new ResponseDto();
-    x.result = result;
+    x.result = postWithLikesAndDislikes;
     x.message = 'Success';
     res.status(200).json(x);
 })
@@ -69,10 +69,16 @@ app.post('/deletePost', async(req,res)=>{
 app.post('/likes', async(req,res)=>{
     const {post_id, user_id} = req.body;
     const like_id = uuid();
-    const result = await database.createLikes(like_id,post_id,user_id);
-    console.log(result);
+    await database.createLikes(like_id,post_id,user_id);
     res.json('Post liked by user');
 });
+
+//a user can get likes
+app.get('/likes', async(req,res)=>{
+    const postId = req.params;
+    const r = await database.getLikesByPost(postId)
+    res.json({message:success,result:r})
+})
 
 //a user can dislike a post
 app.post('/dislikes', async(req,res)=>{
