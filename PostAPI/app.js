@@ -4,7 +4,7 @@ import cors from 'cors';
 import { uuid } from 'uuidv4';
 import database from './database.js';
 import ResponseDto from './Models/responseDto.js';
-import { postEnumeratorLikes} from './helper/helper.js';
+import { likesAndDislikesCounter} from './helper/helper.js';
 
 const app = express();
 
@@ -31,7 +31,7 @@ app.post('/posts', async(req,res)=>{
 //get all posts
 app.get('/postsAll', async(req,res)=>{
     const posts = await database.getAllPosts();
-    const postWithLikesAndDislikes = postEnumeratorLikes(posts);
+    const postWithLikesAndDislikes = likesAndDislikesCounter(posts);
     const x = new ResponseDto();
     x.result = postWithLikesAndDislikes;
     x.message = 'Success';
@@ -42,8 +42,9 @@ app.get('/postsAll', async(req,res)=>{
 app.get('/posts/:user_id', async(req,res)=>{
     const {user_id} = req.params;
     const result = await database.getAllPostByUserId(user_id);
+    const postWithLikesAndDislikes = likesAndDislikesCounter(result);
     const x = new ResponseDto();
-    x.result = result;
+    x.result = postWithLikesAndDislikes;
     x.message = 'Success';
     res.status(200).json(x);
 });
@@ -68,12 +69,19 @@ app.post('/deletePost', async(req,res)=>{
 //a user can like a post
 app.post('/likes', async(req,res)=>{
     const {post_id, user_id} = req.body;
-    const like_id = uuid();
-    await database.createLikes(like_id,post_id,user_id);
-    res.json('Post liked by user');
+    //user can not like an already liked post
+    //check if the user id and post id exists in the table -- if it does then already exists
+    const postAlreadyLiked = await database.getLikesByPostAndUser(user_id,post_id);
+    if(postAlreadyLiked){
+        return res.json('Post already liked by user');
+    }else{
+        const like_id = uuid();
+        await database.createLikes(like_id,post_id,user_id);
+        return res.json('Post liked by user');
+    }
 });
 
-//a user can get likes
+//a user can get likes by postId
 app.get('/likes', async(req,res)=>{
     const postId = req.params;
     const r = await database.getLikesByPost(postId)
@@ -83,10 +91,15 @@ app.get('/likes', async(req,res)=>{
 //a user can dislike a post
 app.post('/dislikes', async(req,res)=>{
     const {post_id, user_id} = req.body;
-    const like_id = uuid();
-    const result = await database.createDislikes(like_id,post_id,user_id);
-    console.log(result);
-    res.json('Post disliked by user');
+    const postAlreadyDisliked = await database.getDislikesByPostAndUser(user_id,post_id);
+    if(postAlreadyDisliked){
+        return res.json('Post already disliked by user');
+    }else{
+        const like_id = uuid();
+        const result = await database.createDislikes(like_id,post_id,user_id);
+        // console.log(result);
+     return   res.json('Post disliked by user');
+    }
 });
 
 

@@ -1,4 +1,4 @@
-export function postEnumeratorLikes(posts) {
+export function likesAndDislikesCounter(posts) {
     const newPostsArr = [];
   for (let i = 0; i <= posts.length - 1; i++) {
       if (posts[i+1]?.id === posts[i].id) {

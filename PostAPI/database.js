@@ -27,7 +27,7 @@ const createPost = async (
 
 //get all posts by a certain user with likes and dislikes
 const getAllPostByUserId = async (user_id) => {
-  const query = `SELECT * FROM posts
+  const query = `SELECT posts.*, likes.id as likes, dislikes.id as dislikes FROM posts
                    LEFT OUTER JOIN likes ON posts.id = likes.post_id
                    LEFT OUTER JOIN dislikes ON posts.id = dislikes.post_id
                    WHERE posts.user_id=$1;`;
@@ -96,6 +96,13 @@ const getLikesByUser = async (user_id) => {
   return result.rows;
 };
 
+//get likes by user_id and post_id
+const getLikesByPostAndUser = async(user_id, post_id)=>{
+  const query = `SELECT * FROM likes WHERE user_id = $1 AND post_id = $2;`;
+  const result = await db.query(query,[user_id,post_id]);
+  return result.rows
+}
+
 const removeLikes = async (like_id, post_id) => {
   const query = `DELETE FROM likes WHERE id=$1 AND post_id=$2 RETURNING *;`;
   const result = await db.query(query, [like_id, post_id]);
@@ -120,6 +127,13 @@ const getDislikesByPost = async (post_id) => {
   return result.rows;
 };
 
+//get likes by user_id and post_id
+const getDislikesByPostAndUser = async(user_id, post_id)=>{
+  const query = `SELECT * FROM dislikes WHERE user_id = $1 AND post_id = $2;`;
+  const result = await db.query(query,[user_id,post_id]);
+  return result.rows
+}
+
 const removeDislikes = async (dislike_id, post_id) => {
   const query = `DELETE FROM dislikes WHERE id=$1 AND post_id=$2 RETURNING *;`;
   const result = await db.query(query, [dislike_id, post_id]);
@@ -140,4 +154,6 @@ export default {
   createDislikes,
   getDislikesByUser,
   removeDislikes,
+  getLikesByPostAndUser,
+  getDislikesByPostAndUser
 };
