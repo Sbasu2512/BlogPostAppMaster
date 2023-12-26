@@ -25,7 +25,7 @@ app.post('/posts', async(req,res)=>{
     const x = new ResponseDto();
     x.result = result;
     x.message = 'Post has been created';
-    res.status(201).json(x);
+    return res.status(201).json(x);
 });
 
 //get all posts
@@ -35,7 +35,7 @@ app.get('/postsAll', async(req,res)=>{
     const x = new ResponseDto();
     x.result = postWithLikesAndDislikes;
     x.message = 'Success';
-    res.status(200).json(x);
+    return res.status(200).json(x);
 })
 
 //a user can see all of his/her posts
@@ -46,8 +46,17 @@ app.get('/posts/:user_id', async(req,res)=>{
     const x = new ResponseDto();
     x.result = postWithLikesAndDislikes;
     x.message = 'Success';
-    res.status(200).json(x);
+    return res.status(200).json(x);
 });
+
+//fetch post by post_id
+app.get('/post/:id', async(req,res)=>{
+    const {id} = req.params;
+    
+    const result = await database.getPostById(id);
+    
+    return res.status(200).json(result);
+})
 
 //a user can edit posts
 app.post('/editPosts', async(req,res)=>{
@@ -56,14 +65,14 @@ app.post('/editPosts', async(req,res)=>{
     const edited_on = Date.now();
 
     const result = await database.updatePost(post_id, title, body, is_draft, isPublished, is_edited, edited_on, user_id);
-    res.status(201).json(result);
+    return res.status(201).json(result);
 })
 
 //a user can delete posts
 app.post('/deletePost', async(req,res)=>{
     const {post_id, user_id} = req.body;
     await database.deletePost(post_id,user_id);
-    res.json('Post deleted Successfully');
+    return res.json('Post deleted Successfully');
 })
 
 //a user can like a post
@@ -72,7 +81,8 @@ app.post('/likes', async(req,res)=>{
     //user can not like an already liked post
     //check if the user id and post id exists in the table -- if it does then already exists
     const postAlreadyLiked = await database.getLikesByPostAndUser(user_id,post_id);
-    if(postAlreadyLiked){
+    console.log("🚀 ~ file: app.js:75 ~ app.post ~ postAlreadyLiked:", postAlreadyLiked)
+    if(postAlreadyLiked.length > 0){
         return res.json('Post already liked by user');
     }else{
         const like_id = uuid();
@@ -85,14 +95,15 @@ app.post('/likes', async(req,res)=>{
 app.get('/likes', async(req,res)=>{
     const postId = req.params;
     const r = await database.getLikesByPost(postId)
-    res.json({message:success,result:r})
+   return res.json({message:success,result:r})
 })
 
 //a user can dislike a post
 app.post('/dislikes', async(req,res)=>{
     const {post_id, user_id} = req.body;
     const postAlreadyDisliked = await database.getDislikesByPostAndUser(user_id,post_id);
-    if(postAlreadyDisliked){
+    if(postAlreadyDisliked.length > 0){
+        console.log(postAlreadyDisliked);
         return res.json('Post already disliked by user');
     }else{
         const like_id = uuid();

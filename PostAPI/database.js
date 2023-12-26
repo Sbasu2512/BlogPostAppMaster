@@ -46,6 +46,16 @@ const getAllPosts = async () => {
   return result.rows;
 };
 
+//get post by post id
+const getPostById = async(post_id) => {
+  const query = `SELECT posts.*, likes.id as likes, dislikes.id as dislikes FROM posts
+  LEFT OUTER JOIN likes ON posts.id = likes.post_id
+  LEFT OUTER JOIN dislikes ON posts.id = dislikes.post_id
+  WHERE posts.id = $1;`
+  const result = await db.query(query,[post_id]);
+  return result.rows;
+}
+
 const updatePost = async (
   post_id,
   post_title,
@@ -143,6 +153,7 @@ export default {
   createPost,
   getAllPostByUserId,
   getAllPosts,
+  getPostById,
   updatePost,
   deletePost,
   createLikes,

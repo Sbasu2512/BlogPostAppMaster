@@ -1,7 +1,16 @@
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import env from "react-dotenv";
+import { ToastContainer, toast } from "react-toastify";
 
 export default function PostDetailPage(props) {
+  
+  const [changeLikes, setChangeLikes] = useState(false);
+  const [changeDislikes, setChangeDislikes] = useState(false);
+  const [fetchPost, setFetchPost] = useState(false);
+  
   const { body, title, creator, time } = props;
 
   const allPosts = useSelector((state) => state?.posts?.AllPosts);
@@ -20,8 +29,47 @@ export default function PostDetailPage(props) {
 
   const timePostCreated = `${new Date(post.createdon).getDate()}/${new Date(post.createdon).getMonth()+1}/${new Date(post.createdon).getFullYear()}`
 
+  useEffect(()=>{
+    if(changeLikes){
+      axios.post(`${env.REACT_APP_Posts_API}/likes`,{
+        user_id:user.userId,
+        post_id:post.id
+      }).then((res)=>{
+        if(res.status === 200){
+          toast.info(res.data);
+          //update redux store for this specific post
+        }
+      })
+    }
+
+    return ()=>{
+      setChangeLikes(false);
+    }
+
+  },[changeLikes])
+
+  useEffect(()=>{
+    if(changeDislikes){
+      axios.post(`${env.REACT_APP_Posts_API}/dislikes`,{
+        user_id:user.userId,
+        post_id:post.id
+      }).then((res) => {
+        if(res.status === 200){
+          toast.info(res.data);
+          //update store for this specific post
+        }
+      })
+    }
+
+    return ()=>{
+      setChangeDislikes(false);
+    }
+
+  },[changeDislikes])
+
   return (
     <>
+    <ToastContainer/>
       <div className="container h-[600px] w-[100vw]">
         <div className="col-span-1"></div>
         <div className="col-span-2 flex flex-col content-center flex-wrap w-[100vw]">
@@ -41,7 +89,7 @@ export default function PostDetailPage(props) {
               <br />
               <div className="mx-5 my-5">{post.post_body}</div>
               <div className="flex flex-row bg-yellow-200">
-                <span className="w-[50%] flex content-center justify-center justify-items-center">
+                <span className="w-[50%] flex content-center justify-center justify-items-center" onClick={()=>setChangeLikes(true)}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
@@ -52,7 +100,7 @@ export default function PostDetailPage(props) {
                   </svg>
                   <p className="mt-2">{post.likes === null ? 0 : post.likes}</p>
                 </span>
-                <span className="w-[50%] flex content-center justify-center justify-items-center">
+                <span className="w-[50%] flex content-center justify-center justify-items-center" onClick={()=>setChangeDislikes(true)}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
