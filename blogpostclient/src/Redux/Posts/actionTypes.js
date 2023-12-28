@@ -6,3 +6,4 @@ export const deleteAllPosts = "DELETE_POSTS_FROM_ALLPOSTS"; // delete from all p
 
 export const updatePostStore = "UPDATE_ALL_POSTS";  //update all post store
 export const UpdateUserPosts = "UPDATE_USER_POSTS";  //update user posts store
+

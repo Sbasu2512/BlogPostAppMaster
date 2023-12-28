@@ -1,31 +1,27 @@
 import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import env from "react-dotenv";
 import { ToastContainer, toast } from "react-toastify";
+import { addAllPostsAction, addUserPostsAction } from "../../Actions/postAction";
+
 
 export default function PostDetailPage(props) {
   
   const [changeLikes, setChangeLikes] = useState(false);
   const [changeDislikes, setChangeDislikes] = useState(false);
-  const [fetchPost, setFetchPost] = useState(false);
-  
-  const { body, title, creator, time } = props;
+  const [pullPosts, setPullPosts] = useState(false);
 
+  const dispatch = useDispatch();
+  
   const allPosts = useSelector((state) => state?.posts?.AllPosts);
 
   const user = useSelector((state)=> state?.users?.userDetails);
 
   const post_id = useParams();
 
-  console.log(post_id.id);
-
   const post = allPosts.filter((x) => x.id === post_id.id)[0];
-
-  console.log(post);
-
-  console.log('user',user)
 
   const timePostCreated = `${new Date(post.createdon).getDate()}/${new Date(post.createdon).getMonth()+1}/${new Date(post.createdon).getFullYear()}`
 
@@ -35,9 +31,10 @@ export default function PostDetailPage(props) {
         user_id:user.userId,
         post_id:post.id
       }).then((res)=>{
+        console.log(res);
         if(res.status === 200){
           toast.info(res.data);
-          //update redux store for this specific post
+          setPullPosts(true);
         }
       })
     }
@@ -53,10 +50,11 @@ export default function PostDetailPage(props) {
       axios.post(`${env.REACT_APP_Posts_API}/dislikes`,{
         user_id:user.userId,
         post_id:post.id
-      }).then((res) => {
+      }).then((res)=>{
+        console.log(res);
         if(res.status === 200){
           toast.info(res.data);
-          //update store for this specific post
+          setPullPosts(true);
         }
       })
     }
@@ -66,6 +64,31 @@ export default function PostDetailPage(props) {
     }
 
   },[changeDislikes])
+
+  useEffect(()=>{
+    const userId = user.userId;
+    console.log("🚀 ~ file: PostDetailPage.js:66 ~ useEffect ~ userId:", userId)
+    if(pullPosts && userId){
+      axios.all(
+        [axios.get(`${env.REACT_APP_Posts_API}/postsAll`),
+        axios.get(`${env.REACT_APP_Posts_API}/posts/${userId}`)]
+      ).then((axios.spread((allPosts,userPosts)=>{
+        //save all posts to store
+        dispatch(addAllPostsAction(allPosts.data.result));
+        //save user posts to store with user_id
+        const userPostObj = {
+          user_id:userId,
+          user_posts:userPosts.data.result
+        }
+        dispatch(addUserPostsAction(userPostObj));
+      })))
+
+    }
+
+    return () => {
+      setPullPosts(false);
+    }
+  },[pullPosts])
 
   return (
     <>

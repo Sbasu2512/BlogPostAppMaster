@@ -1,7 +1,13 @@
-import { React } from "react";
+import { React, useEffect } from "react";
+import PostHeader from "./PostHeader/PostHeader";
 import PostBody from "./PostBody/postbody";
-import { useLocation } from "react-router-dom";
+import PostFooter from "./PostFooter/postfooter";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
+
 import { useSelector } from "react-redux";
+import { ToastContainer, toast } from 'react-toastify';
+
 
 export default function Posts() {
   const allPosts = useSelector((state)=> state?.posts?.AllPosts);
@@ -16,6 +22,7 @@ export default function Posts() {
  
   return (
     <>
+    <ToastContainer />
     <div className="container">
       <PostBody token={token} allPosts={allPosts} userPosts={userPosts} />
     </div>

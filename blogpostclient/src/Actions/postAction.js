@@ -1,4 +1,4 @@
-import { addUserPosts,addAllPosts, UpdateUserPosts, updatePostStore } from "../Redux/Posts/actionTypes"
+import { addUserPosts,addAllPosts, UpdateUserPosts, updatePostStore} from "../Redux/Posts/actionTypes"
 
 const addUserPostsAction = (data) => {
     return{
@@ -30,4 +30,9 @@ const updateAllPostsAction = (data) => {
 }
 
 
-export {addUserPostsAction, addAllPostsAction, updateUserPostsAction,updateAllPostsAction}
+export {
+    addUserPostsAction, 
+    addAllPostsAction, 
+    updateUserPostsAction,
+    updateAllPostsAction
+}

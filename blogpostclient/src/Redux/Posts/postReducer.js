@@ -2,7 +2,7 @@ import {
   addAllPosts,
   addUserPosts,
   UpdateUserPosts,
-  updatePostStore,
+  updatePostStore
 } from "./actionTypes";
 
 const initialState = {};
@@ -28,7 +28,7 @@ export default function postReducer(state = initialState, action) {
     case updatePostStore:
       state.AllPosts.push(action.payload);
       return { ...state };
-
+      
     default:
       return state;
   }

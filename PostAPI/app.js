@@ -51,10 +51,8 @@ app.get('/posts/:user_id', async(req,res)=>{
 
 //fetch post by post_id
 app.get('/post/:id', async(req,res)=>{
-    const {id} = req.params;
-    
-    const result = await database.getPostById(id);
-    
+    const {post_id} = req.params;
+    const result = await database.getPostById(post_id);
     return res.status(200).json(result);
 })
 

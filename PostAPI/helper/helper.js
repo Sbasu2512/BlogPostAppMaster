@@ -1,40 +1,44 @@
 export function likesAndDislikesCounter(posts) {
-    const newPostsArr = [];
-  for (let i = 0; i <= posts.length - 1; i++) {
-      if (posts[i+1]?.id === posts[i].id) {
-        let likes = 0;
-        let dislikes = 0;
-      //duplicate post
-      //check for likes
-      if (posts[i].likes) likes++;
-      if (posts[i + 1].likes) likes++;
-      //check for dislikes
-      if(posts[i].dislikes) dislikes++;
-      if(posts[i].dislikes) dislikes++;
-      //assign the values with likes
-      const postsWithLikes = {
-        id: posts[i+1].id,
-        post_title: posts[i+1].post_title,
-        post_body: posts[i+1].post_body,
-        createdon: posts[i+1].createdon,
-        tag: posts[i+1].tag,
-        is_draft: posts[i+1].is_draft,
-        is_published: posts[i+1].is_published,
-        is_edited: posts[i+1].is_edited,
-        edited_on: posts[i+1].edited_on,
-        user_id: posts[i+1].user_id,
-        displayname: posts[i+1].displayname,
-        dislikes: dislikes,
-        likes: likes,
-      };
-      //push the new obj with updated likes values in a separate array
-      newPostsArr.push(postsWithLikes);
-      //remove both the duplicate element
-      posts.splice(i,i+1);
-    }else{
-        newPostsArr.push(posts[i])
-    }
+  
+// Create an object to store counts of likes and dislikes for each post ID
+const postCounts = {};
+
+// Iterate through the data
+posts.forEach(post => {
+  const postId = post.id;
+
+  // If the post ID exists in the postCounts object, increment the counts
+  if (postCounts[postId]) {
+    postCounts[postId].likes++;
+    postCounts[postId].dislikes++;
+  } else { // If the post ID is not found, initialize counts with the current values
+    postCounts[postId] = {
+      likes: 1,
+      dislikes: 1
+    };
   }
-//  console.log(newPostsArr)
-  return newPostsArr;
+});
+
+const uniquePosts = {}; // Store unique posts based on their IDs
+
+// Update the posts array with counts for duplicate posts and keep one instance of each unique post
+const updatedData = posts.reduce((accumulator, post) => {
+  const postId = post.id;
+
+  if (!uniquePosts[postId]) {
+    uniquePosts[postId] = true;
+
+    if (postCounts[postId] && postCounts[postId].likes > 1) {
+      post.likes = postCounts[postId].likes.toString();
+      post.dislikes = postCounts[postId].dislikes.toString();
+    }
+    accumulator.push(post);
+  }
+
+  return accumulator;
+}, []);
+
+console.log(updatedData);
+return updatedData;
 }
+
