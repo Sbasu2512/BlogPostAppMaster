@@ -8,7 +8,7 @@ import  Jwt  from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
 import verifyJWT from "./middleware/verifyJWT.js"
 import ResponseModel from './models/ResponseModel.js';
-import ResponseStatus from './models/enum';
+import {ResponseStatus} from './models/enum.js';
 const app = express();
 
 app.use(express.json());

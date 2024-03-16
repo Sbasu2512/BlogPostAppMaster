@@ -1,4 +1,4 @@
-export default ResponseStatus = Object.freeze({
+export const ResponseStatus = Object.freeze({
     SUCCESS:'Success',
     FAIL:'Failure'
 })
