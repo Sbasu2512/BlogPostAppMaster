@@ -15,8 +15,8 @@ export default function PostBody(props) {
   const [edit, setEdit] = useState(false);
   const [showProfileForm, setShowProfileForm] = useState(true);
   const [profileDetails, setProfileDetails] = useState({
-    displayName: userDetailsObj?.displayName ? userDetailsObj.displayName : "",
-    descripton: userDetailsObj?.description ? userDetailsObj.description : "",
+    displayName: userDetailsObj?.displayName ? userDetailsObj?.displayName : "",
+    descripton: userDetailsObj?.description ? userDetailsObj?.description : "",
   });
   const [updatePasswordForm, setUpdatePasswordForm] = useState({
     oldPassword: "",
@@ -43,8 +43,6 @@ export default function PostBody(props) {
       ...updatePasswordForm,
       [e.target.name]: e.target.value,
     });
-
-    console.log('pass', updatePasswordForm.newPassword)
   };
 
   const resetUpdatePasswordForm = (e) => {
@@ -58,8 +56,8 @@ export default function PostBody(props) {
 
   useEffect(()=>{
     if(profileDetails && profileDetails.descripton !== "" && profileDetails.displayName !== "" && edit){
-       const userId = userDetailsObj.userId;
-       const profileId = userDetailsObj.profileId;
+       const userId = userDetailsObj?.userId;
+       const profileId = userDetailsObj?.profileId;
        const headers={
         'authorization':`Bearer ${props.token}`
        }
@@ -69,7 +67,6 @@ export default function PostBody(props) {
           displayName:profileDetails.displayName,
           description:profileDetails.descripton
         },{headers}).then((res)=>{
-          console.log('res',res);
           if(res.data.message === 'Profile Updated Successfully'){
             setProfileDetails({
               displayName:res.data.result.displayname,
@@ -77,7 +74,7 @@ export default function PostBody(props) {
             });
            
             dispatch(updateUserDetailsAction({
-              userId: userDetailsObj.userId,
+              userId: userDetailsObj?.userId,
               displayName: res.data.result.displayname,
               description: res.data.result.description
             }))
@@ -147,7 +144,7 @@ export default function PostBody(props) {
               props.userPosts.user_posts?.map((post)=>
               (<Card 
               title={post.post_title} 
-              creator={userDetailsObj.displayName} 
+              creator={userDetailsObj?.displayName} 
               time={post.createdon}
               body={post.post_body}
               likes={post.likescount}
@@ -179,7 +176,7 @@ export default function PostBody(props) {
           <div className="container my-3 rounded outline outline-4 outline-offset-0 outline-amber-100  min-h-[30%] max-h-[35%]">
             <div className="ml-2 p-4">
               <p className="font-mono">
-                Welcome <strong> {userDetailsObj.displayName} </strong>,
+                Welcome <strong> {userDetailsObj?.displayName} </strong>,
                 <br />
                 Your personal blog post page. To create a post, click the button
                 below.

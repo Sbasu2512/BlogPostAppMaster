@@ -100,7 +100,8 @@ app.post('/login', async(req,res)=>{
                 
                 //upon successful login, we need to send the profile details to the front end as well as the user details
                 const token = {
-                    token: accessToken
+                    token: accessToken,
+                    userId: ifUserExists.id
                 }
                 res.cookie('jwt', refreshToken, {httpOnly:true, maxAge: 4 * 60 * 60 * 1000});
                 const response = new ResponseModel(token,ResponseStatus.SUCCESS,true)
@@ -118,7 +119,7 @@ app.post('/login', async(req,res)=>{
     }
 });
 
-app.get(`/refresh`, async (req,res)=>{
+app.get(`/refresh`, verifyJWT, async (req,res)=>{
     try{
         const cookies = req.cookies;
         if(!cookies?.jwt) {
@@ -296,6 +297,7 @@ app.get(`/getUserDetails/:id`,verifyJWT, async(req,res)=>{
            return res.status(200).json(response)
         }
         const user = await database.findUserWithId(id);
+        const profile = await database.fetchProfileByUserId(id);
         if(!user){
             const response = new ResponseModel(null,'user not found',ResponseStatus.SUCCESS)
             return res.status(200).json(response)
@@ -305,6 +307,11 @@ app.get(`/getUserDetails/:id`,verifyJWT, async(req,res)=>{
                 email: user.email,
                 createdon: user.createdon,
                 isverifiedemail:user.isverifiedemail,
+                displayName: profile.displayname,
+                profilePicture: profile.profilepicture,
+                description:profile.description,
+                last_online:profile.last_online,
+                profileId:profile.id
             }
             const response = new ResponseModel(mappedUser,'User found',ResponseStatus.SUCCESS)
             return res.status(200).json(response)

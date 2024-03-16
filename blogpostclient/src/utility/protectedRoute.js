@@ -10,6 +10,7 @@ import {
   addUserPostsAction,
   addAllPostsAction,
 } from "../Actions/postAction";
+import { addUserDetailsAction } from "../Actions/userAction";
 
 const ProtectedRoute = (props) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -21,22 +22,14 @@ const ProtectedRoute = (props) => {
   });
 
   const navigate = useNavigate();
-  let token;
+  let token, userId;
   const location = useLocation();
   if (location?.state) {
-    token = location?.state;
+    token = location?.state.token;
+    userId = location.state.userId
   }
-
-  const checkUserEmailOrUserId = () => {
-    // const userEmail = state?.email;
-    // console.log(userDetails);
-
-    // const lastLoginTime = localStorage.getItem('lastLoginTime');
-    // const timeAllowed = 1000*60*4;
-    // const now = new Date(Date.now()).getTime();
-    // const timeSinceLastLogin = now - lastLoginTime;
-    const userId = userDetails?.userId || localStorage.getItem("userId");
-
+ 
+  const checkUserEmailOrUserId = async () => {    
     if (!userId || userId === "undefined" || userId === "null") {
       setIsAuthenticated(false);
       return navigate("/");
@@ -70,7 +63,7 @@ const ProtectedRoute = (props) => {
       axios
         .all([
           axios.get(`${env.REACT_APP_Posts_API}/postsAll`),
-          axios.get(`${env.REACT_APP_Posts_API}/posts/${userDetails.userId}`),
+          axios.get(`${env.REACT_APP_Posts_API}/posts/${userId}`),
         ])
         .then(
           axios.spread((allPosts, userPosts) => {
@@ -92,14 +85,11 @@ const ProtectedRoute = (props) => {
   }, [fetchPosts]);
 
   useEffect(() => {
-    console.log(userDetails)
-
     const config = {
       headers:{
-        'authorization':`bearer ${Cookies.get('jwt')}`
+        'authorization':`bearer ${token}`
       }
     }
-
     if (logUserOut) {
       axios
         .post(`${env.REACT_APP_Users_API}/logoff`, {

@@ -10,7 +10,6 @@ function verifyJWT  (req, res, next) {
     Jwt.verify(token,process.env.ACCESS_TOKEN_SECRET,(err, decodedToken)=>{
         if(err) return res.status(403).json({message:'Token unauthenticated'});
         req.userId = decodedToken.userId
-        console.log('here')
         next();
     })
 }

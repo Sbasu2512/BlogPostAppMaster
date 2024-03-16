@@ -3,7 +3,8 @@ import { useState } from "react";
 import axios from "axios";
 import env from "react-dotenv";
 import { useNavigate } from "react-router-dom";
-import Cookies from 'js-cookie';
+import { useDispatch } from "react-redux";
+import { addUserDetailsAction } from "../../Actions/userAction";
 
 const LoginForm = (props) => {
   const [submitting, setSubmitting] = useState(false);
@@ -11,7 +12,12 @@ const LoginForm = (props) => {
     email: "",
     password: "",
   });
+  const [token, setToken] = useState("");
+  const [userId, setUserId] = useState("")
+
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     setInputFields({ ...inputFields, [e.target.name]: e.target.value });
@@ -23,27 +29,22 @@ const LoginForm = (props) => {
       axios.post(`${env.REACT_APP_Users_API}/login`,{
         email:inputFields.email,
         password:inputFields.password
-      }).then((response)=>{
-        
+      }).then((response)=>{        
         setInputFields({
           email: "",
           password: "",
         });
-        if(response.status === 200){
+        if(response.status){
           props.func({
             status:true,
-            message:response.data.result
+            userId:response.data.result.userId
           })
+          setUserId(response.data.result.userId);
+          setToken(response.data.result.token)
 
-          
           localStorage.setItem('lastLoginTime', new Date(Date.now()).getTime());
-          localStorage.setItem('userId', response.data.result.userId);
-          localStorage.setItem('profileId', response.data.result.profileId);          
           //store the access token securely
-          //upon successful login, we need to route the application to posts page with user profile
-          setTimeout(() => {
-            navigate('/posts',{state:response.data.result.token});
-        }, 500);
+
         }else{
           props.func({
             status:false,
@@ -53,6 +54,45 @@ const LoginForm = (props) => {
       })
     }
   },[submitting]);
+
+  async function getUserDetails(id, accessToken){
+
+    const config = {
+      headers:{
+        'authorization':`bearer ${accessToken}`
+      }
+    }
+
+    axios.get(`${env.REACT_APP_Users_API}/getUserDetails/${id}`,config).then((response)=>{
+      if(response.data.status === "Success"){
+        const userDetails = {
+            description: response.data.result.description,
+        displayName: response.data.result.displayName,
+        email: response.data.result.email,
+        profileId: response.data.result.profileId,
+        userId: response.data.result.id
+      };
+      dispatch(addUserDetailsAction(userDetails));
+      const data = {
+       token,
+       userId
+      } 
+      
+      //upon successful login, we need to route the application to posts page with user profile
+       setTimeout(() => {
+         navigate('/posts',{state:data});
+     }, 500);
+
+      }
+    })
+  }
+
+  useEffect(()=>{
+    if(token && userId){
+      getUserDetails(userId, token)
+    }
+  },[token,userId])
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
