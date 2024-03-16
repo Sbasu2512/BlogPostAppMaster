@@ -1,7 +1,7 @@
 const alterPostsTable=`
 ALTER TABLE posts
-    DROP COLUMN likesCount,
-    DROP COLUMN dislikesCount
+    ADD COLUMN likes ARRAY,
+    ADD COLUMN dislikes ARRAY
 ;`;
 
 export default alterPostsTable;

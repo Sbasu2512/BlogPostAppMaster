@@ -9,12 +9,16 @@ posts.forEach(post => {
 
   // If the post ID exists in the postCounts object, increment the counts
   if (postCounts[postId]) {
-    postCounts[postId].likes++;
-    postCounts[postId].dislikes++;
+    if(!postCounts[postId].likes.includes(post.likes)){
+      postCounts[postId].likes.push(post.likes);
+    }
+    if(!postCounts[postId].dislikes.includes(post.dislikes)){
+      postCounts[postId].dislikes.push(post.dislikes);
+    }
   } else { // If the post ID is not found, initialize counts with the current values
     postCounts[postId] = {
-      likes: 1,
-      dislikes: 1
+      likes: [],
+      dislikes: []
     };
   }
 });
@@ -28,9 +32,9 @@ const updatedData = posts.reduce((accumulator, post) => {
   if (!uniquePosts[postId]) {
     uniquePosts[postId] = true;
 
-    if (postCounts[postId] && postCounts[postId].likes > 1) {
-      post.likes = postCounts[postId].likes.toString();
-      post.dislikes = postCounts[postId].dislikes.toString();
+    if (postCounts[postId] && postCounts[postId].likes.length > 1) {
+      post.likes = postCounts[postId].likes;
+      post.dislikes = postCounts[postId].dislikes;
     }
     accumulator.push(post);
   }
@@ -38,7 +42,7 @@ const updatedData = posts.reduce((accumulator, post) => {
   return accumulator;
 }, []);
 
-console.log(updatedData);
+// console.log(updatedData);
 return updatedData;
 }
 

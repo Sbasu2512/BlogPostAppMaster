@@ -13,6 +13,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 app.use(cors());
+app.use(cookieParser());
 
 app.post('/register', async(req,res)=>{
     const {email,password} = req.body;
@@ -85,7 +86,6 @@ app.post('/login', async(req,res)=>{
                     description:profileDetails?.description,
                     token: accessToken
                 }
-                
                 res.cookie('jwt', refreshToken, {httpOnly:true, maxAge: 4 * 60 * 60 * 1000});
                 return res.status(200).json({result:user,message:"success"});
             } else{
@@ -96,30 +96,27 @@ app.post('/login', async(req,res)=>{
 });
 
 app.get(`/refresh`, async (req,res)=>{
-    console.log('req obj',req.rawHeaders[3]);
-    const cookies = req.cookies || req.rawHeaders[3].split("=")[1];
-    console.log(cookies);
-    if(!cookies || !cookies?.jwt) {
-        return res.sendStatus(401)
-    };
-    console.log(cookies.jwt);
-    const refreshToken = cookies.jwt || cookies;
+    const cookies = req.cookies;
+    if(!cookies?.jwt) {
+        return res.status(401).json({message:'xxx'})
+    };   
+    const refreshToken = cookies.jwt ;
     const  foundUser = await database.findUserwithToken(refreshToken);
     if (!foundUser) {
-        return res.sendStatus(403);
+        return res.status(403).json({message:'User not found'});
     }
     //evaluate jwt
     Jwt.verify(
         refreshToken,
         process.env.REFRESH_TOKEN_SECRET,
         (err, decoded) => {
-            if(err || foundUser.email !== decoded.email) return res.sendStatus(403);
+            if(err || foundUser.email !== decoded.userEmail) return res.status(403).json({message:'Could not verify user'});
             const accessToken = Jwt.sign(
-                {"userEmail":ifUserExists?.email},
+                {"userEmail":foundUser?.email},
                 process.env.ACCESS_TOKEN_SECRET,
                 {expiresIn:'600s'}
             );
-            res.json({accessToken});
+           return res.json({accessToken});
         }
     )
 })
@@ -144,6 +141,8 @@ app.post('/forgotPassword', async(req,res)=>{
         return res.json(`Email is not registered with us`);
     }
 });
+
+app.use(verifyJWT);
 
 app.post('/logoff', async(req,res)=>{
     const {profile_id, user_id} = req.body;
@@ -186,7 +185,6 @@ app.post('/updateEmail', async(req,res)=>{
 })
 
 //need update password route
-
 app.post(`/deleteUser`, async(req,res)=>{
     const {email, profile_id} = req.body;
     const user = await database.findUserwithEmail(email);
