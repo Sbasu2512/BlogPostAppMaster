@@ -3,6 +3,7 @@ import { useState } from "react";
 import axios from "axios";
 import env from "react-dotenv";
 import { useNavigate } from "react-router-dom";
+import Cookies from 'js-cookie';
 
 const LoginForm = (props) => {
   const [submitting, setSubmitting] = useState(false);
@@ -33,8 +34,7 @@ const LoginForm = (props) => {
             status:true,
             message:response.data.result
           })
-          //storing the last login time in local storage
-          //storing the user_id & profile_id in local storage
+
           
           localStorage.setItem('lastLoginTime', new Date(Date.now()).getTime());
           localStorage.setItem('userId', response.data.result.userId);

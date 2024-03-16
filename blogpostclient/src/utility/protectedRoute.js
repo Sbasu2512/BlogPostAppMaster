@@ -92,12 +92,20 @@ const ProtectedRoute = (props) => {
   }, [fetchPosts]);
 
   useEffect(() => {
+    console.log(userDetails)
+
+    const config = {
+      headers:{
+        'authorization':`bearer ${Cookies.get('jwt')}`
+      }
+    }
+
     if (logUserOut) {
       axios
         .post(`${env.REACT_APP_Users_API}/logoff`, {
-          user_id: userDetails.user_id,
-          profile_id: userDetails.profile_id,
-        })
+          user_id: userDetails.userId,
+          profile_id: userDetails.profileId,
+        },config)
         .then((res) => {
           if (res.data.message === "Logoff Successful") {
             localStorage.clear();

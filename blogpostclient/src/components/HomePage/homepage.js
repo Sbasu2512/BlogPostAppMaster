@@ -134,7 +134,7 @@ const HomePage = () => {
                     "ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2"
                   )}
                 >
-                  <LoginForm func={pulldata} />
+                  <LoginForm/>
                 </Tab.Panel>
               </Tab.Panels>
             </Tab.Group>

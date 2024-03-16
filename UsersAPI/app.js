@@ -7,16 +7,32 @@ import { uuid } from 'uuidv4';
 import  Jwt  from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
 import verifyJWT from "./middleware/verifyJWT.js"
+import ResponseModel from './models/ResponseModel.js';
+import ResponseStatus from './models/enum';
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
+
+// var whitelist = ['http://localhost:3000'] //only allowing localhost:3000 to access this endpoint
+// var corsOptions = {
+//   credentials: true,
+//   origin: function(origin, callback) {
+//     if (whitelist.indexOf(origin) !== -1) {
+//       callback(null, true)
+//     } else {
+//       callback(new Error('Not allowed by CORS'))
+//     }
+//   }
+// }
+
 app.use(cors());
 app.use(cookieParser());
 
 app.post('/register', async(req,res)=>{
-    const {email,password} = req.body;
+    try{
+        const {email,password} = req.body;
     const emailRegex = new RegExp(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/);
     //password must be between 6 & 16 characters, must have a number and a special character (@#$%^&)
     const passwordRegex = new RegExp(/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/);
@@ -25,7 +41,8 @@ app.post('/register', async(req,res)=>{
         const ifUserExists = await database.findUserwithEmail(email);
 
         if(ifUserExists && ifUserExists.email === email){
-            return res.status(201).json({message:`email address already registered`});
+            const response = new ResponseModel(null,'email address already registered',ResponseStatus.SUCCESS)
+            return res.status(201).json(response);
         }
 
         const saltRounds = parseInt(process.env.SALT_ROUNDS);
@@ -43,15 +60,22 @@ app.post('/register', async(req,res)=>{
         //upon sucessful registration, we need to create profile for the user as well.
         await database.createProfile(user_id, profile_id);
         //upon succesful registration, we need to send a verification email with link to the user.
-
-        res.status(200).json({message:`Registration succesfull!`});
+        const response = new ResponseModel(null,'Registration succesfull!',ResponseStatus.SUCCESS)
+        res.status(200).json(response);
     } else{
-        res.status(201).json({message:'Email/password not in correct format'});
+        const response = new ResponseModel(null,'Email/password not in correct format',ResponseStatus.SUCCESS)
+        res.status(201).json(response);
     }
+    }catch(e){
+        const response = new ResponseModel(e,`Error encountered`,ResponseStatus.FAIL)
+        return res.status(200).json(response);
+    }
+    
 });
 
 app.post('/login', async(req,res)=>{
-    const {email,password} = req.body;
+    try{
+        const {email,password} = req.body;
     
         const ifUserExists = await database.findUserwithEmail(email);
         // match password hash
@@ -61,13 +85,13 @@ app.post('/login', async(req,res)=>{
                 //implement jwt token & send token with it and save the token to the db
                              
                 const accessToken = Jwt.sign(
-                    {"userEmail":ifUserExists?.email},
+                    {"userId":ifUserExists?.id},
                     process.env.ACCESS_TOKEN_SECRET,
                     {expiresIn:'600s'}
                 );
 
                 const refreshToken = Jwt.sign(
-                    {"userEmail":ifUserExists?.email},
+                    {"userId":ifUserExists?.id},
                     process.env.REFRESH_TOKEN_SECRET,
                     {expiresIn:'4h'}
                 )
@@ -75,133 +99,220 @@ app.post('/login', async(req,res)=>{
                 await database.updateToken(ifUserExists.id, refreshToken);
                 
                 //upon successful login, we need to send the profile details to the front end as well as the user details
-                const profileDetails = await database.fetchProfileByUserId(ifUserExists.id);
-                const user = {
-                    email: ifUserExists?.email,
-                    userId: ifUserExists?.id,
-                    isVerfiedEmail: ifUserExists?.isVerfiedEmail,
-                    profileId:profileDetails?.id,
-                    displayName:profileDetails?.displayname,
-                    profilePicture:profileDetails?.profilePicture,
-                    description:profileDetails?.description,
+                const token = {
                     token: accessToken
                 }
                 res.cookie('jwt', refreshToken, {httpOnly:true, maxAge: 4 * 60 * 60 * 1000});
-                return res.status(200).json({result:user,message:"success"});
+                const response = new ResponseModel(token,ResponseStatus.SUCCESS,true)
+                return res.status(200).json(response);
             } else{
-                return res.status(201).json({result:[],message:`Credentials do not match`});
+                const response = new ResponseModel("Unsuccessfull",'Credentials do not match',ResponseStatus.SUCCESS)
+                return res.status(201).json(response);
             }
         }
-        return res.status(201).json({message:`Email not registered, please register`});
+        const response = new ResponseModel("Unsuccessfull",'Email not registered, please register',ResponseStatus.SUCCESS,)
+        return res.status(201).json(response);
+    }catch(e){
+        const response = new ResponseModel(e,`Error encountered`,ResponseStatus.FAIL)
+        return res.status(200).json(response);
+    }
 });
 
 app.get(`/refresh`, async (req,res)=>{
-    const cookies = req.cookies;
-    if(!cookies?.jwt) {
-        return res.status(401).json({message:'xxx'})
-    };   
-    const refreshToken = cookies.jwt ;
-    const  foundUser = await database.findUserwithToken(refreshToken);
-    if (!foundUser) {
-        return res.status(403).json({message:'User not found'});
-    }
-    //evaluate jwt
-    Jwt.verify(
-        refreshToken,
-        process.env.REFRESH_TOKEN_SECRET,
-        (err, decoded) => {
-            if(err || foundUser.email !== decoded.userEmail) return res.status(403).json({message:'Could not verify user'});
-            const accessToken = Jwt.sign(
-                {"userEmail":foundUser?.email},
-                process.env.ACCESS_TOKEN_SECRET,
-                {expiresIn:'600s'}
-            );
-           return res.json({accessToken});
+    try{
+        const cookies = req.cookies;
+        if(!cookies?.jwt) {
+            return res.status(401);
+        };   
+        const refreshToken = cookies.jwt ;
+        const  foundUser = await database.findUserwithToken(refreshToken);
+        if (!foundUser) {
+            const response = new ResponseModel(null,'User not found',ResponseStatus.SUCCESS)
+            return res.status(403).json(response);
         }
-    )
+        //evaluate jwt
+        Jwt.verify(
+            refreshToken,
+            process.env.REFRESH_TOKEN_SECRET,
+            (err, decoded) => {
+                if(err || foundUser.id !== decoded.userId){ 
+                    const response = new ResponseModel(null,'Could not verify user',ResponseStatus.SUCCESS)
+                    return res.status(403).json(response);
+                }
+                const accessToken = Jwt.sign(
+                    {"userId":foundUser?.id},
+                    process.env.ACCESS_TOKEN_SECRET,
+                    {expiresIn:'600s'}
+                );
+                const response = new ResponseModel(accessToken,"Access Token Issued",ResponseStatus.SUCCESS)
+               return res.json(response);
+            }
+        )
+    }catch(e){
+        const response = new ResponseModel(e,`Error encountered`,ResponseStatus.FAIL)
+        return res.status(200).json(response);
+    }
+    
 })
 
 //forgot password & reset password
 app.post('/forgotPassword', async(req,res)=>{
-    const {email, newPassword} = req.body;
-    const ifUserExists = await database.findUserwithEmail(email);
-    const passwordRegex = new RegExp(/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/);
-    if(ifUserExists){
-        if(passwordRegex.test(newPassword)){
-
-            const saltRounds = parseInt(process.env.SALT_ROUNDS);
-            const user_id = ifUserExists.id;
-            const hash = await bcrypt.hash(newPassword,saltRounds);
-            await database.resetPassword(hash,user_id);
-            return res.json(`Password updated successfully`);
+    try{
+        const {email, newPassword} = req.body;
+        const ifUserExists = await database.findUserwithEmail(email);
+        const passwordRegex = new RegExp(/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/);
+        if(ifUserExists){
+            if(passwordRegex.test(newPassword)){
+    
+                const saltRounds = parseInt(process.env.SALT_ROUNDS);
+                const user_id = ifUserExists.id;
+                const hash = await bcrypt.hash(newPassword,saltRounds);
+                await database.resetPassword(hash,user_id);
+                const response = new ResponseModel(null,`Password updated successfully`,ResponseStatus.SUCCESS)
+                return res.json(response);
+            }else{
+                const response = new ResponseModel(null,`Password must have one special character & one number`,ResponseStatus.SUCCESS,true)
+                return res.json(response)
+            }
         }else{
-            return res.json(`Password must have one special character & one number`)
+            const response = new ResponseModel(null,`Email is not registered with us`,ResponseStatus.SUCCESS)
+            return res.json(response);
         }
-    }else{
-        return res.json(`Email is not registered with us`);
+    }catch(e){
+        const response = new ResponseModel(e,`Error encountered`,ResponseStatus.FAIL)
+        return res.status(200).json(response);
     }
+    
 });
 
-app.use(verifyJWT);
-
-app.post('/logoff', async(req,res)=>{
-    const {profile_id, user_id} = req.body;
-    const last_online = new Date();
-    await database.deleteToken(user_id)
-    await database.updateLastOnline(profile_id,user_id,last_online);
-    res.clearCookie('jwt',{httpOnly:true}).json({message:'Logoff Successful'});
+app.post('/logoff',verifyJWT, async(req,res)=>{
+    try{
+        const {profile_id, user_id} = req.body;
+        if(!profile_id || !user_id){
+            const response = new ResponseModel(null,`Log off unsucessful`,ResponseStatus.SUCCESS)
+            return res.json(response);
+        }
+        const last_online = new Date();
+        await database.deleteToken(user_id)
+        await database.updateLastOnline(profile_id,user_id,last_online);
+        res.clearCookie('jwt',{httpOnly:true})
+        const response = new ResponseModel(null,`Logoff Successful`,ResponseStatus.SUCCESS)
+        return res.json(response);
+    }catch(e){
+        const response = new ResponseModel(e,`Error encountered`,ResponseStatus.FAIL)
+        return res.status(200).json(response);
+    }
+   
 });
 
 app.post('/resetPassword', async(req,res)=>{
-    const {user_id, oldPassword, newPassword} = req.body;
+    try{
+        const {user_id, oldPassword, newPassword} = req.body;
     const findUser = await database.findUserWithId(user_id);
     if(findUser){
         if(bcrypt.compare(oldPassword, findUser.password)){
             await database.resetPassword(newPassword, user_id)
-            return res.send({result:'Success', message:'Password successfully updated'})
+            const response = new ResponseModel(null,`Password successfully updated`,ResponseStatus.SUCCESS)
+            return res.send(response)
         } else {
-           return res.send({result:'Failure', message:'Incorrect old password'});
+           const response = new ResponseModel(null,`Incorrect old password`,ResponseStatus.SUCCESS)
+            return res.send(response);
         }
     }else{
-       return res.send({result:'Failure', message:'User not found'});
+       const response = new ResponseModel(null,`User not found`,ResponseStatus.SUCCESS)
+        return res.send(response);
     }
+    }catch(e){
+        const response = new ResponseModel(e,`Error encountered`,ResponseStatus.FAIL)
+        return res.status(200).json(response);
+    }
+    
 });
 
 app.post('/updateEmail', async(req,res)=>{
-    const {email, newEmail} = req.body;
-    const user = await database.findUserwithEmail(email);
-    if(user){
-        const user_id = user.id;
-        const emailRegex = new RegExp(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/);
-        if(emailRegex.test(newEmail)){
-            await database.updateEmail(newEmail,user_id);
-            return res.json(`Email updated successfully`);
+    try{
+        const {email, newEmail} = req.body;
+        const user = await database.findUserwithEmail(email);
+        if(user){
+            const user_id = user.id;
+            const emailRegex = new RegExp(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/);
+            if(emailRegex.test(newEmail)){
+                await database.updateEmail(newEmail,user_id);
+                const response = new ResponseModel(null,`Email updated successfully`,ResponseStatus.SUCCESS)
+                return res.json(response);
+            }else{
+                const response = new ResponseModel(null,`Invalid Email`,ResponseStatus.SUCCESS)
+                return res.json(response);
+            }
         }else{
-            return res.json(`Email is not in correct format`);
+            const response = new ResponseModel(null,`User not found`,ResponseStatus.SUCCESS)
+            return res.json(response);
         }
-    }else{
-        return res.json(`User not found`);
+    }catch(e){
+        const response = new ResponseModel(e,`Error encountered`,ResponseStatus.FAIL)
+        return res.status(200).json(response);
     }
+   
 })
 
 //need update password route
 app.post(`/deleteUser`, async(req,res)=>{
-    const {email, profile_id} = req.body;
+    try{
+        const {email, profile_id} = req.body;
     const user = await database.findUserwithEmail(email);
     if(user){
         const user_id = user.id;
         await database.deleteUser(user_id);
         await database.deleteProfile(profile_id, user_id);
-        return res.json(`User deleted successfully`);
+        const response = new ResponseModel(null,'User deleted successfully',ResponseStatus.SUCCESS)
+        return res.json(response);
     }else{
-        return res.json(`Error Occured`);
+        const response = new ResponseModel(null,'User not found',ResponseStatus.SUCCESS)
+        return res.json(response);
+    }
+    }catch(e){
+        const response = new ResponseModel(e,`Error encountered`,ResponseStatus.FAIL)
+        return res.status(200).json(response);
     }
 })
 
 app.post(`/updateProfile`, async(req,res)=>{
-    const {profile_id, displayName, description, user_id} = req.body;
-    const profileUpdate = await database.updateDisplayNameAndDescriptionProfile(profile_id,displayName,description,user_id);
-    return res.json({result:profileUpdate,message:`Profile Updated Successfully`});
+    try{
+        const {profile_id, displayName, description, user_id} = req.body;
+        const profileUpdate = await database.updateDisplayNameAndDescriptionProfile(profile_id,displayName,description,user_id);
+        const response = new ResponseModel(profileUpdate,'Profile Updated Successfully',ResponseStatus.SUCCESS)
+        return res.json(response);
+    }catch(e){
+        const response = new ResponseModel(e,`Error encountered`,ResponseStatus.FAIL)
+        return res.status(200).json(response);
+    }
+})
+
+app.get(`/getUserDetails/:id`,verifyJWT, async(req,res)=>{
+    try{
+        const {id} = req.params;
+        if(!id){
+            const response = new ResponseModel(null,'Not valid user id',ResponseStatus.SUCCESS)
+           return res.status(200).json(response)
+        }
+        const user = await database.findUserWithId(id);
+        if(!user){
+            const response = new ResponseModel(null,'user not found',ResponseStatus.SUCCESS)
+            return res.status(200).json(response)
+        }else{
+            const mappedUser = {
+                id:  user.id,
+                email: user.email,
+                createdon: user.createdon,
+                isverifiedemail:user.isverifiedemail,
+            }
+            const response = new ResponseModel(mappedUser,'User found',ResponseStatus.SUCCESS)
+            return res.status(200).json(response)
+        }
+    }catch(e){
+        const response = new ResponseModel(e,`Error encountered`,ResponseStatus.FAIL)
+        return res.status(200).json(response);
+    }
 })
 
 export default app;
