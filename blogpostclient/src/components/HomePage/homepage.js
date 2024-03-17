@@ -18,11 +18,6 @@ function classNames(...classes) {
 const HomePage = () => {
 
   const [selectedIndex, setSelectedIndex] = useState(1);
-  const [pullPosts, setPullPosts] = useState(false);
-  const [userId, setUserId] = useState("");
-  
-  
-  const dispatch = useDispatch();
   
   const pulldata = (data) => {
     let isSuccess = false;
@@ -31,8 +26,6 @@ const HomePage = () => {
       //store user details
       const userId = data.userId.userId;
       if(userId){
-        setUserId(userId);
-        setPullPosts(true);
         setSelectedIndex(1);
       }
     
@@ -49,32 +42,6 @@ const HomePage = () => {
         });
     }
   };
-
-  useEffect(()=>{
-    if(pullPosts && userId){
-
-      axios.all(
-        [axios.get(`${env.REACT_APP_Posts_API}/postsAll`),
-        axios.get(`${env.REACT_APP_Posts_API}/posts/${userId}`)]
-      ).then((axios.spread((allPosts,userPosts)=>{
-        //save all posts to store
-        dispatch(addAllPostsAction(allPosts.data.result));
-        //save user posts to store with user_id
-        const userPostObj = {
-          user_id:userId,
-          user_posts:userPosts.data.result
-        }
-        dispatch(addUserPostsAction(userPostObj));
-      })))
-
-    }
-
-    return () => {
-      setUserId("");
-      setPullPosts(false);
-    }
-  },[pullPosts])
-
 
   return (<>
   <ToastContainer />

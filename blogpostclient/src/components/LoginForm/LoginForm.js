@@ -12,8 +12,6 @@ const LoginForm = (props) => {
     email: "",
     password: "",
   });
-  const [token, setToken] = useState("");
-  const [userId, setUserId] = useState("")
 
   const navigate = useNavigate();
 
@@ -39,12 +37,18 @@ const LoginForm = (props) => {
             status:true,
             userId:response.data.result.userId
           })
-          setUserId(response.data.result.userId);
-          setToken(response.data.result.token)
-
+         
           localStorage.setItem('lastLoginTime', new Date(Date.now()).getTime());
-          //store the access token securely
 
+          const data = {
+            token:response.data.result.token,
+            userId:response.data.result.userId
+           } 
+          //store the access token securely
+          //upon successful login, we need to route the application to posts page with user profile
+       setTimeout(() => {
+        navigate('/posts',{state:data});
+    }, 500);
         }else{
           props.func({
             status:false,
@@ -54,44 +58,6 @@ const LoginForm = (props) => {
       })
     }
   },[submitting]);
-
-  async function getUserDetails(id, accessToken){
-
-    const config = {
-      headers:{
-        'authorization':`bearer ${accessToken}`
-      }
-    }
-
-    axios.get(`${env.REACT_APP_Users_API}/getUserDetails/${id}`,config).then((response)=>{
-      if(response.data.status === "Success"){
-        const userDetails = {
-            description: response.data.result.description,
-        displayName: response.data.result.displayName,
-        email: response.data.result.email,
-        profileId: response.data.result.profileId,
-        userId: response.data.result.id
-      };
-      dispatch(addUserDetailsAction(userDetails));
-      const data = {
-       token,
-       userId
-      } 
-      
-      //upon successful login, we need to route the application to posts page with user profile
-       setTimeout(() => {
-         navigate('/posts',{state:data});
-     }, 500);
-
-      }
-    })
-  }
-
-  useEffect(()=>{
-    if(token && userId){
-      getUserDetails(userId, token)
-    }
-  },[token,userId])
 
 
   const handleSubmit = (e) => {
