@@ -13,7 +13,7 @@ import { addAllPostsAction, addUserPostsAction } from "../../../Actions/postActi
 export default function PostBody(props) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const location = useLocation();
+  // const location = useLocation();
   const [edit, setEdit] = useState(false);
   const [showProfileForm, setShowProfileForm] = useState(true);
   const [updatePasswordForm, setUpdatePasswordForm] = useState({
@@ -23,13 +23,15 @@ export default function PostBody(props) {
   const [isLoading, setLoading] = useState(false);
   const [showuserposts, setShowUserPosts] = useState(false);
   const [userId, setUserId] = useState("");
+  const [token, setToken] = useState("");
   
   useEffect( ()=>{
-    if (location?.state) {
+    if (props) {
       setLoading(true);
-      if(location.state.userId && location?.state.token){
-        setUserId(location.state.userId);
-        getUserDetails(location.state.userId, location?.state.token)
+      if(props.token.userId && props?.token.token){
+        setUserId(props.token.userId);
+        setToken(props.token.token);
+        getUserDetails(props.token.userId, props?.token.token)
       }
     }
   },[])

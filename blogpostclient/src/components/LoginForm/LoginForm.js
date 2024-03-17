@@ -3,8 +3,6 @@ import { useState } from "react";
 import axios from "axios";
 import env from "react-dotenv";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { addUserDetailsAction } from "../../Actions/userAction";
 
 const LoginForm = (props) => {
   const [submitting, setSubmitting] = useState(false);
@@ -15,7 +13,7 @@ const LoginForm = (props) => {
 
   const navigate = useNavigate();
 
-  const dispatch = useDispatch();
+  
 
   const handleChange = (e) => {
     setInputFields({ ...inputFields, [e.target.name]: e.target.value });

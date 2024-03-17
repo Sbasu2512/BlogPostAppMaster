@@ -119,7 +119,7 @@ app.post('/login', async(req,res)=>{
     }
 });
 
-app.get(`/refresh`, verifyJWT, async (req,res)=>{
+app.get(`/refresh`, async (req,res)=>{
     try{
         const cookies = req.cookies;
         if(!cookies?.jwt) {

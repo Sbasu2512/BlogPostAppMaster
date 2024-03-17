@@ -27,8 +27,8 @@ export function ProfileDetails(props) {
       </span>
             </div>
       <div className="font-mono ml-2">
-        <p>Display Name: {props.userDetails.displayName} </p>
-        <p>Description: {props.userDetails.description} </p>
+        <p>Display Name: {props?.userDetails?.displayName} </p>
+        <p>Description: {props?.userDetails?.description} </p>
       </div>
     </>
   );
