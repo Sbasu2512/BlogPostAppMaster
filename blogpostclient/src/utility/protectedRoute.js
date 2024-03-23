@@ -24,7 +24,7 @@ const ProtectedRoute = (props) => {
   const navigate = useNavigate();
   let token, userId;
   const location = useLocation();
-  if (location?.state) {
+  if (location?.state ) {
     token = location?.state.token;
     userId = location.state.userId
   }
@@ -35,6 +35,7 @@ const ProtectedRoute = (props) => {
       return navigate("/");
     }
     setIsAuthenticated(true);
+    setFetchPosts(true);
   };
 
   useEffect(() => {
@@ -49,7 +50,7 @@ const ProtectedRoute = (props) => {
         if(page === 'posts'){
             setFetchPosts(true);
         }else{
-            navigate('/posts',{ state: token })
+            navigate('/posts',{ state: location.state })
         }
     }
     if (data.requirement === "logout") {
@@ -58,12 +59,12 @@ const ProtectedRoute = (props) => {
   };
 
   useEffect(() => {
-    if (fetchPosts && userDetails.userId) {
+    if (fetchPosts) {
       //fetching all posts and also updating the redux state
       axios
         .all([
           axios.get(`${env.REACT_APP_Posts_API}/postsAll`),
-          axios.get(`${env.REACT_APP_Posts_API}/posts/${userDetails.userId}`),
+          axios.get(`${env.REACT_APP_Posts_API}/posts/${userId}`),
         ])
         .then(
           axios.spread((allPosts, userPosts) => {
@@ -71,7 +72,7 @@ const ProtectedRoute = (props) => {
             dispatch(addAllPostsAction(allPosts.data.result));
             //save user posts to store with user_id
             const userPostObj = {
-              user_id: userDetails.userId,
+              user_id: userId,
               user_posts: userPosts.data.result,
             };
             dispatch(addUserPostsAction(userPostObj));

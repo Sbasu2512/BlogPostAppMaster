@@ -12,7 +12,7 @@ export default function Card(props) {
 
         let path = '/post/' + id ;
 
-        navigate(path, { state: props.token });
+        navigate(path, { state: {token:props.token} });
       },500)
     }
 

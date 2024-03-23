@@ -52,8 +52,12 @@ app.get('/posts/:user_id', async(req,res)=>{
 //fetch post by post_id
 app.get('/post/:id', async(req,res)=>{
     const {post_id} = req.params;
-    const result = await database.getPostById(post_id);
-    return res.status(200).json(result);
+    if(post_id){
+        const result = await database.getPostById(post_id);
+        return res.status(200).json(result);
+    } else {
+        return res.json({message:'Invalid post Id'})
+    }
 })
 
 //a user can edit posts

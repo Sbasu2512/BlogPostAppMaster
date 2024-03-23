@@ -22,17 +22,18 @@ export default function PostBody(props) {
   });
   const [isLoading, setLoading] = useState(false);
   const [showuserposts, setShowUserPosts] = useState(false);
-  const [userId, setUserId] = useState("");
-  const [token, setToken] = useState("");
   
+
+  const location = useLocation();
+  let userId, token ;
+  if (location?.state?.token && location?.state?.userId) {
+    token = location?.state.token;
+    userId = location.state.userId
+  }
+ 
   useEffect( ()=>{
-    if (props) {
-      setLoading(true);
-      if(props.token.userId && props?.token.token){
-        setUserId(props.token.userId);
-        setToken(props.token.token);
+    if (userId && token) {
         getUserDetails(props.token.userId, props?.token.token)
-      }
     }
   },[])
 
@@ -75,10 +76,6 @@ export default function PostBody(props) {
         dispatch(addUserPostsAction(userPostObj));
       })))
 
-    }
-
-    return () => {
-      setUserId("");
     }
   },[])
 
@@ -219,6 +216,7 @@ export default function PostBody(props) {
               id={post.id}
               key={post.id}
               tag={post.tag}
+              token={token}
               />)
               )) : (
                 props?.allPosts?.map((post)=>
@@ -232,6 +230,7 @@ export default function PostBody(props) {
                   id={post.id}
               key={post.id}
               tag={post.tag}
+              token={token}
               />)
               )
             )
