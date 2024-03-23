@@ -67,7 +67,6 @@ export default function PostDetailPage(props) {
 
   useEffect(()=>{
     const userId = user.userId;
-    console.log("🚀 ~ file: PostDetailPage.js:66 ~ useEffect ~ userId:", userId)
     if(pullPosts && userId){
       axios.all(
         [axios.get(`${env.REACT_APP_Posts_API}/postsAll`),

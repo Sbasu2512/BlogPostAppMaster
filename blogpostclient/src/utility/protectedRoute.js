@@ -58,12 +58,12 @@ const ProtectedRoute = (props) => {
   };
 
   useEffect(() => {
-    if (fetchPosts) {
+    if (fetchPosts && userDetails.userId) {
       //fetching all posts and also updating the redux state
       axios
         .all([
           axios.get(`${env.REACT_APP_Posts_API}/postsAll`),
-          axios.get(`${env.REACT_APP_Posts_API}/posts/${userId}`),
+          axios.get(`${env.REACT_APP_Posts_API}/posts/${userDetails.userId}`),
         ])
         .then(
           axios.spread((allPosts, userPosts) => {
