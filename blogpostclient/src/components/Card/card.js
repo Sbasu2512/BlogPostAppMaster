@@ -20,7 +20,7 @@ export default function Card(props) {
 
     return(
         <>
-        <div className="flex flex-col rounded mt-3 light-orange font-mono h-25" onClick={(e)=>handlePostDetail(e)}>
+        <div className="flex flex-col rounded mt-3 light-orange font-mono h-25" >
             <div className="mt-2 text-xs">
             <span className="ml-2 flex">
               <p className="mr-3">Posted by {creator}</p>
@@ -31,7 +31,7 @@ export default function Card(props) {
             <span className="ml-2 text-lg">{title}</span>
             <span className="ml-3 my-3 ring ring-black rounded-full bg-black text-white">{tag}</span> 
             </div>
-            <div className="mx-2 mt-2 text-sm">
+            <div className="mx-2 mt-2 text-sm" onClick={(e)=>handlePostDetail(e)}>
               {body?.length > 150 ?  body.substring(0,150):body }
             </div>
             <div className="flex flex-row bg-yellow-200">
