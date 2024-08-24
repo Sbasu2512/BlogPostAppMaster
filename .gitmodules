@@ -1,0 +1,3 @@
+[submodule "BlogPostApp-FrontEnd"]
+	path = BlogPostApp-FrontEnd
+	url = https://github.com/Sbasu2512/BlogPostApp-FrontEnd
