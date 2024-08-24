@@ -4,3 +4,6 @@
 [submodule "BlogPostApp-Post"]
 	path = BlogPostApp-Post
 	url = https://github.com/Sbasu2512/BlogPostApp-Post
+[submodule "BlogPostApp-User"]
+	path = BlogPostApp-User
+	url = https://github.com/Sbasu2512/BlogPostApp-User
